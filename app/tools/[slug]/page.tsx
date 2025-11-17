@@ -27,6 +27,11 @@ import JWTGenerator from '@/components/tools/JWTGenerator'
 import CSVToJSONConverter from '@/components/tools/CSVToJSONConverter'
 import PasswordGenerator from '@/components/tools/PasswordGenerator'
 import JSONToYAMLConverter from '@/components/tools/JSONToYAMLConverter'
+import HTMLEntityConverter from '@/components/tools/HTMLEntityConverter'
+import NumberBaseConverter from '@/components/tools/NumberBaseConverter'
+import TextEscaper from '@/components/tools/TextEscaper'
+import JSONPathTester from '@/components/tools/JSONPathTester'
+import StringCounter from '@/components/tools/StringCounter'
 
 // Tool component mapper
 const toolComponents: Record<string, React.ComponentType> = {
@@ -55,6 +60,11 @@ const toolComponents: Record<string, React.ComponentType> = {
   'csv-json-converter': CSVToJSONConverter,
   'password-generator': PasswordGenerator,
   'json-yaml-converter': JSONToYAMLConverter,
+  'html-entity-converter': HTMLEntityConverter,
+  'number-base-converter': NumberBaseConverter,
+  'text-escaper': TextEscaper,
+  'jsonpath-tester': JSONPathTester,
+  'string-counter': StringCounter,
 }
 
 // Generate static params for all tools

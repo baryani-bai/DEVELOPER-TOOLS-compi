@@ -926,3 +926,158 @@ function parseValue(value: string): any {
 
   return value
 }
+
+// HTML Entity encoding/decoding
+export function encodeHTMLEntities(text: string): string {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
+export function decodeHTMLEntities(text: string): string {
+  const textarea = document.createElement('textarea')
+  textarea.innerHTML = text
+  return textarea.value
+}
+
+// Number base conversion
+export function convertNumberBase(value: string, fromBase: number, toBase: number): string {
+  try {
+    const decimal = parseInt(value, fromBase)
+    if (isNaN(decimal)) {
+      throw new Error('Invalid number for the specified base')
+    }
+    return decimal.toString(toBase).toUpperCase()
+  } catch (err) {
+    throw new Error('Conversion failed: ' + (err instanceof Error ? err.message : 'Unknown error'))
+  }
+}
+
+// Text escaping/unescaping
+export function escapeText(text: string, type: 'javascript' | 'json' | 'xml' | 'url'): string {
+  switch (type) {
+    case 'javascript':
+      return text
+        .replace(/\\/g, '\\\\')
+        .replace(/'/g, "\\'")
+        .replace(/"/g, '\\"')
+        .replace(/\n/g, '\\n')
+        .replace(/\r/g, '\\r')
+        .replace(/\t/g, '\\t')
+    case 'json':
+      return JSON.stringify(text).slice(1, -1)
+    case 'xml':
+      return text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&apos;')
+    case 'url':
+      return encodeURIComponent(text)
+    default:
+      return text
+  }
+}
+
+export function unescapeText(text: string, type: 'javascript' | 'json' | 'xml' | 'url'): string {
+  switch (type) {
+    case 'javascript':
+      return text
+        .replace(/\\n/g, '\n')
+        .replace(/\\r/g, '\r')
+        .replace(/\\t/g, '\t')
+        .replace(/\\'/g, "'")
+        .replace(/\\"/g, '"')
+        .replace(/\\\\/g, '\\')
+    case 'json':
+      try {
+        return JSON.parse(`"${text}"`)
+      } catch {
+        throw new Error('Invalid JSON escape sequence')
+      }
+    case 'xml':
+      return decodeHTMLEntities(text)
+    case 'url':
+      return decodeURIComponent(text)
+    default:
+      return text
+  }
+}
+
+// JSONPath evaluation (simple implementation)
+export function evaluateJSONPath(json: string, path: string): string {
+  try {
+    const data = JSON.parse(json)
+
+    // Simple JSONPath implementation (supports basic paths like $.store.book[0].title)
+    let result = data
+
+    // Remove leading $. if present
+    const cleanPath = path.replace(/^\$\.?/, '')
+
+    if (!cleanPath) {
+      return JSON.stringify(result, null, 2)
+    }
+
+    // Split by dots and brackets
+    const parts = cleanPath.split(/\.|\[|\]/).filter(p => p)
+
+    for (const part of parts) {
+      if (part === '*') {
+        // Wildcard - return all values
+        if (Array.isArray(result)) {
+          result = result
+        } else if (typeof result === 'object') {
+          result = Object.values(result)
+        }
+      } else if (/^\d+$/.test(part)) {
+        // Array index
+        result = result[parseInt(part)]
+      } else {
+        // Object key
+        result = result[part]
+      }
+
+      if (result === undefined) {
+        throw new Error(`Path not found: ${path}`)
+      }
+    }
+
+    return JSON.stringify(result, null, 2)
+  } catch (err) {
+    throw new Error(err instanceof Error ? err.message : 'JSONPath evaluation failed')
+  }
+}
+
+// String counting
+export function countString(text: string): {
+  characters: number
+  charactersNoSpaces: number
+  words: number
+  lines: number
+  bytes: number
+  sentences: number
+  paragraphs: number
+} {
+  const characters = text.length
+  const charactersNoSpaces = text.replace(/\s/g, '').length
+  const words = text.trim() ? text.trim().split(/\s+/).length : 0
+  const lines = text ? text.split('\n').length : 0
+  const bytes = new Blob([text]).size
+  const sentences = text.trim() ? text.split(/[.!?]+/).filter(s => s.trim()).length : 0
+  const paragraphs = text.trim() ? text.split(/\n\s*\n/).filter(p => p.trim()).length : 0
+
+  return {
+    characters,
+    charactersNoSpaces,
+    words,
+    lines,
+    bytes,
+    sentences,
+    paragraphs
+  }
+}
