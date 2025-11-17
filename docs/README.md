@@ -2,7 +2,44 @@
 
 Welcome to the complete documentation for CodeBox - a modern developer tools suite with 70+ free utilities.
 
+---
+
+## 🚀 **START HERE**
+
+### **New to the Project?**
+1. 📖 **[Development Plan](./00-development-plan.md)** - 10-week roadmap with all 72 tools
+2. ⚡ **[Quick Start Guide](./QUICK-START.md)** - Get coding in 5 minutes
+
+### **Ready to Build?**
+Follow the development plan phase by phase:
+- **Phase 0** (Week 1): Foundation & setup
+- **Phase 1** (Weeks 2-3): MVP with 10 tools
+- **Phase 2** (Weeks 4-5): 20 more tools + search
+- **Phase 3** (Weeks 6-7): 22 more tools + PWA
+- **Phase 4** (Weeks 8-9): Final 20 tools
+- **Phase 5** (Week 10): Polish & launch! 🚀
+
+---
+
 ## 📚 Documentation Index
+
+### 🎯 **Essential Docs**
+
+**0. [Development Plan](./00-development-plan.md)** ⭐ **START HERE**
+- Complete 10-week roadmap
+- All 72 tools organized by phase
+- Daily workflow and milestones
+- Risk management and success criteria
+
+**0.5 [Quick Start Guide](./QUICK-START.md)** ⚡ **GET CODING**
+- Set up in 5 minutes
+- Your first week plan
+- Code examples and patterns
+- Common issues & solutions
+
+---
+
+### 📖 **Design & Architecture**
 
 ### 1. [Project Overview](./01-project-overview.md)
 - Executive summary
