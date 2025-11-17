@@ -4,9 +4,22 @@ import Link from 'next/link'
 import { useState } from 'react'
 import Container from '@/components/ui/Container'
 import Button from '@/components/ui/Button'
+import SearchModal from '@/components/ui/SearchModal'
+import { useKeyboardShortcuts } from '@/lib/hooks/useKeyboardShortcuts'
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [searchOpen, setSearchOpen] = useState(false)
+
+  // Cmd+K / Ctrl+K keyboard shortcut for search
+  useKeyboardShortcuts([
+    {
+      key: 'k',
+      ctrlKey: true,
+      handler: () => setSearchOpen(true),
+      description: 'Open search',
+    },
+  ])
 
   return (
     <header className="sticky top-0 z-50 bg-black/90 backdrop-blur-sm border-b border-border-primary">
@@ -48,12 +61,13 @@ export default function Header() {
           {/* Right side - Search & CTA */}
           <div className="hidden md:flex items-center gap-4">
             <button
-              className="text-text-secondary hover:text-accent-primary transition-colors"
+              onClick={() => setSearchOpen(true)}
+              className="flex items-center gap-2 px-3 py-1.5 text-text-secondary hover:text-accent-primary hover:bg-bg-secondary border border-border-primary transition-colors"
               aria-label="Search"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
+                className="h-4 w-4"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -65,6 +79,10 @@ export default function Header() {
                   d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                 />
               </svg>
+              <span className="text-xs font-mono hidden lg:inline">Search</span>
+              <kbd className="hidden lg:block px-1.5 py-0.5 text-xs font-mono bg-bg-primary border border-border-primary">
+                ⌘K
+              </kbd>
             </button>
 
             <a
@@ -150,6 +168,9 @@ export default function Header() {
           </div>
         )}
       </Container>
+
+      {/* Search Modal */}
+      <SearchModal isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
     </header>
   )
 }

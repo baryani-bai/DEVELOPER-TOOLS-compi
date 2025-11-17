@@ -3,8 +3,8 @@ import { cn } from '@/lib/utils/cn'
 import Link from 'next/link'
 
 interface CardProps {
-  title: string
-  description: string
+  title?: string
+  description?: string
   icon?: string
   href?: string
   children?: ReactNode
@@ -28,12 +28,16 @@ export default function Card({
           {icon}
         </div>
       )}
-      <h3 className="text-xl font-mono font-semibold text-text-primary mb-2">
-        {title}
-      </h3>
-      <p className="text-sm text-text-secondary line-clamp-2 mb-4 flex-grow">
-        {description}
-      </p>
+      {title && (
+        <h3 className="text-xl font-mono font-semibold text-text-primary mb-2">
+          {title}
+        </h3>
+      )}
+      {description && (
+        <p className="text-sm text-text-secondary line-clamp-2 mb-4 flex-grow">
+          {description}
+        </p>
+      )}
       {children}
     </>
   )
