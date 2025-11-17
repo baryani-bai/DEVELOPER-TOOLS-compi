@@ -59,7 +59,7 @@ export default function HeroSection() {
   }, [])
 
   return (
-    <section className="relative overflow-hidden py-20 md:py-32">
+    <section className="relative overflow-hidden py-20 md:py-32 min-h-screen flex items-center">
       <Container>
         <div className="text-center max-w-4xl mx-auto">
           {/* Headline */}
@@ -75,7 +75,7 @@ export default function HeroSection() {
 
           {/* Terminal Box */}
           <div className="bg-bg-tertiary border-2 border-border-primary p-6 md:p-8 text-left mb-12 max-w-2xl mx-auto">
-            <div className="font-mono text-sm md:text-base">
+            <div className="font-mono text-sm md:text-base h-[120px] flex items-start">
               <pre className="text-accent-primary whitespace-pre-wrap break-words">
                 {displayedText}
                 {showCursor && <span className="inline-block w-2 h-5 bg-accent-primary ml-1 align-middle" />}

@@ -24,17 +24,17 @@ export default function Card({
   const content = (
     <>
       {icon && (
-        <div className="text-4xl text-accent-primary mb-4 font-mono">
+        <div className="text-4xl text-accent-primary mb-3 font-mono">
           {icon}
         </div>
       )}
       {title && (
-        <h3 className="text-xl font-mono font-semibold text-text-primary mb-2">
+        <h3 className="text-xl font-mono font-semibold text-text-primary mb-2 leading-tight">
           {title}
         </h3>
       )}
       {description && (
-        <p className="text-sm text-text-secondary line-clamp-2 mb-4 flex-grow">
+        <p className="text-sm text-text-secondary line-clamp-2 mb-3 flex-grow">
           {description}
         </p>
       )}
@@ -43,7 +43,7 @@ export default function Card({
   )
 
   const cardClasses = cn(
-    'bg-bg-secondary border border-border-primary p-6 transition-all duration-200 flex flex-col h-full',
+    'bg-bg-secondary border border-border-primary p-5 transition-all duration-200 flex flex-col h-full',
     'hover:border-accent-primary hover:shadow-glow hover:scale-[1.02]',
     'focus:outline-none focus:border-accent-primary focus:shadow-glow',
     className
