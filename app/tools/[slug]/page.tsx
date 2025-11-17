@@ -42,6 +42,11 @@ import TextReverser from '@/components/tools/TextReverser'
 import WhitespaceRemover from '@/components/tools/WhitespaceRemover'
 import BinaryTextConverter from '@/components/tools/BinaryTextConverter'
 import MorseCodeConverter from '@/components/tools/MorseCodeConverter'
+import MarkdownToHTMLConverter from '@/components/tools/MarkdownToHTMLConverter'
+import JSONToXMLConverter from '@/components/tools/JSONToXMLConverter'
+import URLParser from '@/components/tools/URLParser'
+import YAMLFormatter from '@/components/tools/YAMLFormatter'
+import HexColorConverter from '@/components/tools/HexColorConverter'
 
 // Tool component mapper
 const toolComponents: Record<string, React.ComponentType> = {
@@ -85,6 +90,11 @@ const toolComponents: Record<string, React.ComponentType> = {
   'whitespace-remover': WhitespaceRemover,
   'binary-text-converter': BinaryTextConverter,
   'morse-code-converter': MorseCodeConverter,
+  'markdown-to-html': MarkdownToHTMLConverter,
+  'json-xml-converter': JSONToXMLConverter,
+  'url-parser': URLParser,
+  'yaml-formatter': YAMLFormatter,
+  'hex-color-converter': HexColorConverter,
 }
 
 // Generate static params for all tools
