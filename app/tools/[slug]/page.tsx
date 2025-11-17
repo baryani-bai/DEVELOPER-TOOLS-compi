@@ -7,6 +7,11 @@ import Base64EncoderDecoder from '@/components/tools/Base64EncoderDecoder'
 import UrlEncoderDecoder from '@/components/tools/UrlEncoderDecoder'
 import UuidGenerator from '@/components/tools/UuidGenerator'
 import LoremIpsumGenerator from '@/components/tools/LoremIpsumGenerator'
+import HashGenerator from '@/components/tools/HashGenerator'
+import TextCaseConverter from '@/components/tools/TextCaseConverter'
+import TextDiffChecker from '@/components/tools/TextDiffChecker'
+import HtmlFormatter from '@/components/tools/HtmlFormatter'
+import CssFormatter from '@/components/tools/CssFormatter'
 
 // Tool component mapper
 const toolComponents: Record<string, React.ComponentType> = {
@@ -15,6 +20,11 @@ const toolComponents: Record<string, React.ComponentType> = {
   'url-encoder': UrlEncoderDecoder,
   'uuid-generator': UuidGenerator,
   'lorem-ipsum': LoremIpsumGenerator,
+  'hash-generator': HashGenerator,
+  'text-case-converter': TextCaseConverter,
+  'text-diff-checker': TextDiffChecker,
+  'html-formatter': HtmlFormatter,
+  'css-formatter': CssFormatter,
 }
 
 // Generate static params for all tools

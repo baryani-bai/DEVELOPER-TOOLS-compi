@@ -195,3 +195,80 @@ export function generateLoremIpsum(
   }
   return paragraphs.join('\n\n')
 }
+
+// Text case conversions
+export function convertCase(text: string, caseType: string): string {
+  switch (caseType) {
+    case 'upper':
+      return text.toUpperCase()
+    case 'lower':
+      return text.toLowerCase()
+    case 'title':
+      return text.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase())
+    case 'sentence':
+      return text.toLowerCase().replace(/(^\s*\w|[.!?]\s*\w)/g, (c) => c.toUpperCase())
+    case 'camel':
+      return text.toLowerCase().replace(/[^a-zA-Z0-9]+(.)/g, (_, chr) => chr.toUpperCase())
+    case 'pascal':
+      return text.replace(/\w+/g, (w) => w[0].toUpperCase() + w.slice(1).toLowerCase()).replace(/\s+/g, '')
+    case 'snake':
+      return text.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '')
+    case 'kebab':
+      return text.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
+    case 'constant':
+      return text.toUpperCase().replace(/\s+/g, '_').replace(/[^A-Z0-9_]/g, '')
+    default:
+      return text
+  }
+}
+
+// Format HTML
+export function formatHTML(html: string, indent: number = 2): string {
+  let formatted = ''
+  let indentLevel = 0
+  const indentStr = ' '.repeat(indent)
+
+  html.split(/(<[^>]+>)/g).forEach(part => {
+    if (part.match(/^<\/\w/)) {
+      indentLevel--
+    }
+
+    if (part.trim()) {
+      formatted += indentStr.repeat(indentLevel) + part.trim() + '\n'
+    }
+
+    if (part.match(/^<\w[^>]*[^\/]>$/)) {
+      indentLevel++
+    }
+  })
+
+  return formatted.trim()
+}
+
+// Minify HTML
+export function minifyHTML(html: string): string {
+  return html.replace(/\s+/g, ' ').replace(/>\s+</g, '><').trim()
+}
+
+// Format CSS
+export function formatCSS(css: string, indent: number = 2): string {
+  const indentStr = ' '.repeat(indent)
+  return css
+    .replace(/\s*{\s*/g, ' {\n' + indentStr)
+    .replace(/\s*}\s*/g, '\n}\n')
+    .replace(/\s*;\s*/g, ';\n' + indentStr)
+    .replace(/\s*,\s*/g, ', ')
+    .trim()
+}
+
+// Minify CSS
+export function minifyCSS(css: string): string {
+  return css
+    .replace(/\s+/g, ' ')
+    .replace(/\s*{\s*/g, '{')
+    .replace(/\s*}\s*/g, '}')
+    .replace(/\s*;\s*/g, ';')
+    .replace(/\s*,\s*/g, ',')
+    .replace(/\s*:\s*/g, ':')
+    .trim()
+}
