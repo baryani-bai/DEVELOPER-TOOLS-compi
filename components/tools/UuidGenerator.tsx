@@ -3,8 +3,10 @@
 import { useState } from 'react'
 import CodeDisplay from './CodeDisplay'
 import Button from '@/components/ui/Button'
+import KeyboardHint from '@/components/ui/KeyboardHint'
 import { generateUUID } from '@/lib/utils/toolHelpers'
 import { useToast } from '@/components/ui/Toast'
+import { useKeyboardShortcuts } from '@/lib/hooks/useKeyboardShortcuts'
 
 export default function UuidGenerator() {
   const [uuids, setUuids] = useState<string[]>([])
@@ -36,10 +38,27 @@ export default function UuidGenerator() {
     setUuids([])
   }
 
+  // Keyboard shortcuts
+  useKeyboardShortcuts([
+    {
+      key: 'Enter',
+      ctrlKey: true,
+      handler: handleGenerate,
+      description: 'Generate UUIDs',
+    },
+    {
+      key: 'k',
+      ctrlKey: true,
+      handler: handleClear,
+      description: 'Clear output',
+    },
+  ])
+
   const output = uuids.join('\n')
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {/* Options Panel */}
       <div className="bg-bg-secondary border border-border-primary p-6">
         <h3 className="font-mono text-lg font-semibold text-text-primary mb-6">
@@ -136,6 +155,15 @@ export default function UuidGenerator() {
         code={output}
         language="text"
         filename="uuids.txt"
+      />
+      </div>
+
+      {/* Keyboard Shortcuts */}
+      <KeyboardHint
+        shortcuts={[
+          { keys: 'Ctrl+Enter', action: 'Generate UUIDs' },
+          { keys: 'Ctrl+K', action: 'Clear output' },
+        ]}
       />
     </div>
   )

@@ -4,8 +4,10 @@ import { useState } from 'react'
 import ToolPanel from './ToolPanel'
 import CodeDisplay from './CodeDisplay'
 import Button from '@/components/ui/Button'
+import KeyboardHint from '@/components/ui/KeyboardHint'
 import { urlEncode, urlDecode } from '@/lib/utils/toolHelpers'
 import { useToast } from '@/components/ui/Toast'
+import { useKeyboardShortcuts } from '@/lib/hooks/useKeyboardShortcuts'
 
 type Mode = 'encode' | 'decode'
 
@@ -69,8 +71,33 @@ export default function UrlEncoderDecoder() {
     setError(undefined)
   }
 
+  const handleProcess = () => {
+    if (mode === 'encode') {
+      handleEncode()
+    } else {
+      handleDecode()
+    }
+  }
+
+  // Keyboard shortcuts
+  useKeyboardShortcuts([
+    {
+      key: 'Enter',
+      ctrlKey: true,
+      handler: handleProcess,
+      description: mode === 'encode' ? 'Encode' : 'Decode',
+    },
+    {
+      key: 'k',
+      ctrlKey: true,
+      handler: handleClear,
+      description: 'Clear input',
+    },
+  ])
+
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {/* Input Panel */}
       <ToolPanel
         title={mode === 'encode' ? 'Text Input' : 'Encoded URL'}
@@ -146,6 +173,15 @@ export default function UrlEncoderDecoder() {
         error={error}
         language="text"
         filename={mode === 'encode' ? 'encoded-url.txt' : 'decoded-url.txt'}
+      />
+      </div>
+
+      {/* Keyboard Shortcuts */}
+      <KeyboardHint
+        shortcuts={[
+          { keys: 'Ctrl+Enter', action: mode === 'encode' ? 'Encode URL' : 'Decode URL' },
+          { keys: 'Ctrl+K', action: 'Clear input' },
+        ]}
       />
     </div>
   )

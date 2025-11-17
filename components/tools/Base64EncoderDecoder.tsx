@@ -4,8 +4,10 @@ import { useState } from 'react'
 import ToolPanel from './ToolPanel'
 import CodeDisplay from './CodeDisplay'
 import Button from '@/components/ui/Button'
+import KeyboardHint from '@/components/ui/KeyboardHint'
 import { base64Encode, base64Decode } from '@/lib/utils/toolHelpers'
 import { useToast } from '@/components/ui/Toast'
+import { useKeyboardShortcuts } from '@/lib/hooks/useKeyboardShortcuts'
 
 type Mode = 'encode' | 'decode'
 
@@ -69,8 +71,33 @@ export default function Base64EncoderDecoder() {
     setError(undefined)
   }
 
+  const handleProcess = () => {
+    if (mode === 'encode') {
+      handleEncode()
+    } else {
+      handleDecode()
+    }
+  }
+
+  // Keyboard shortcuts
+  useKeyboardShortcuts([
+    {
+      key: 'Enter',
+      ctrlKey: true,
+      handler: handleProcess,
+      description: mode === 'encode' ? 'Encode' : 'Decode',
+    },
+    {
+      key: 'k',
+      ctrlKey: true,
+      handler: handleClear,
+      description: 'Clear input',
+    },
+  ])
+
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {/* Input Panel */}
       <ToolPanel
         title={mode === 'encode' ? 'Text Input' : 'Base64 Input'}
@@ -126,6 +153,15 @@ export default function Base64EncoderDecoder() {
         error={error}
         language="text"
         filename={mode === 'encode' ? 'encoded.txt' : 'decoded.txt'}
+      />
+      </div>
+
+      {/* Keyboard Shortcuts */}
+      <KeyboardHint
+        shortcuts={[
+          { keys: 'Ctrl+Enter', action: mode === 'encode' ? 'Encode' : 'Decode' },
+          { keys: 'Ctrl+K', action: 'Clear input' },
+        ]}
       />
     </div>
   )
