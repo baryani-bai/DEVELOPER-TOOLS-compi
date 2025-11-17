@@ -4,6 +4,8 @@ import { cn } from '@/lib/utils/cn'
 import Button from '@/components/ui/Button'
 import { copyToClipboard, downloadFile } from '@/lib/utils/toolHelpers'
 import { useToast } from '@/components/ui/Toast'
+import { highlightCode } from '@/lib/utils/syntaxHighlight'
+import { useMemo } from 'react'
 
 interface CodeDisplayProps {
   title: string
@@ -23,6 +25,15 @@ export default function CodeDisplay({
   className,
 }: CodeDisplayProps) {
   const { showToast } = useToast()
+
+  // Memoize syntax highlighting for performance
+  const highlightedCode = useMemo(() => {
+    if (!code || error) return null
+    if (language === 'json') {
+      return highlightCode(code, 'json')
+    }
+    return null
+  }, [code, language, error])
 
   const handleCopy = async () => {
     if (!code && !error) return
@@ -120,7 +131,14 @@ export default function CodeDisplay({
             </div>
           </div>
         ) : code ? (
-          <pre className="whitespace-pre-wrap break-words">{code}</pre>
+          highlightedCode ? (
+            <pre
+              className="whitespace-pre-wrap break-words"
+              dangerouslySetInnerHTML={{ __html: highlightedCode }}
+            />
+          ) : (
+            <pre className="whitespace-pre-wrap break-words">{code}</pre>
+          )
         ) : (
           <div className="flex items-center justify-center h-full text-text-tertiary italic">
             Output will appear here...

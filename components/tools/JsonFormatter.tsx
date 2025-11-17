@@ -4,8 +4,10 @@ import { useState } from 'react'
 import ToolPanel from './ToolPanel'
 import CodeDisplay from './CodeDisplay'
 import Button from '@/components/ui/Button'
+import KeyboardHint from '@/components/ui/KeyboardHint'
 import { formatJSON, validateJSON, minifyJSON } from '@/lib/utils/toolHelpers'
 import { useToast } from '@/components/ui/Toast'
+import { useKeyboardShortcuts } from '@/lib/hooks/useKeyboardShortcuts'
 
 type IndentOption = 2 | 4 | 'tab'
 
@@ -98,8 +100,25 @@ export default function JsonFormatter() {
     setError(undefined)
   }
 
+  // Keyboard shortcuts
+  useKeyboardShortcuts([
+    {
+      key: 'Enter',
+      ctrlKey: true,
+      handler: handleFormat,
+      description: 'Format JSON',
+    },
+    {
+      key: 'k',
+      ctrlKey: true,
+      handler: handleClear,
+      description: 'Clear input',
+    },
+  ])
+
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {/* Input Panel */}
       <ToolPanel
         title="Input JSON"
@@ -160,6 +179,15 @@ export default function JsonFormatter() {
         error={error}
         language="json"
         filename="formatted.json"
+      />
+      </div>
+
+      {/* Keyboard Shortcuts */}
+      <KeyboardHint
+        shortcuts={[
+          { keys: 'Ctrl+Enter', action: 'Format JSON' },
+          { keys: 'Ctrl+K', action: 'Clear input' },
+        ]}
       />
     </div>
   )

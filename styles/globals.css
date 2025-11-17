@@ -113,4 +113,41 @@
   .animate-slide-in {
     animation: slide-in var(--duration-normal) ease-out;
   }
+
+  /* Syntax highlighting */
+  .syntax-key {
+    color: #79c0ff;
+  }
+
+  .syntax-string {
+    color: #a5d6ff;
+  }
+
+  .syntax-number {
+    color: #79c0ff;
+  }
+
+  .syntax-boolean {
+    color: #ff7b72;
+  }
+
+  .syntax-null {
+    color: #ffa657;
+  }
+
+  /* Line numbers */
+  .line-numbers {
+    counter-reset: line;
+  }
+
+  .line-numbers .line::before {
+    counter-increment: line;
+    content: counter(line);
+    display: inline-block;
+    width: 2.5rem;
+    margin-right: 1rem;
+    text-align: right;
+    color: var(--text-tertiary);
+    user-select: none;
+  }
 }
