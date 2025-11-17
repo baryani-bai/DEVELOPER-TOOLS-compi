@@ -22,6 +22,11 @@ import SQLFormatter from '@/components/tools/SQLFormatter'
 import QRCodeGenerator from '@/components/tools/QRCodeGenerator'
 import ImageToBase64 from '@/components/tools/ImageToBase64'
 import CronParser from '@/components/tools/CronParser'
+import XMLFormatter from '@/components/tools/XMLFormatter'
+import JWTGenerator from '@/components/tools/JWTGenerator'
+import CSVToJSONConverter from '@/components/tools/CSVToJSONConverter'
+import PasswordGenerator from '@/components/tools/PasswordGenerator'
+import JSONToYAMLConverter from '@/components/tools/JSONToYAMLConverter'
 
 // Tool component mapper
 const toolComponents: Record<string, React.ComponentType> = {
@@ -45,6 +50,11 @@ const toolComponents: Record<string, React.ComponentType> = {
   'qr-code-generator': QRCodeGenerator,
   'image-to-base64': ImageToBase64,
   'cron-parser': CronParser,
+  'xml-formatter': XMLFormatter,
+  'jwt-generator': JWTGenerator,
+  'csv-json-converter': CSVToJSONConverter,
+  'password-generator': PasswordGenerator,
+  'json-yaml-converter': JSONToYAMLConverter,
 }
 
 // Generate static params for all tools

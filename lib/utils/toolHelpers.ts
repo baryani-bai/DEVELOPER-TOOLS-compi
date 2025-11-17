@@ -635,3 +635,294 @@ export function parseCronExpression(expression: string): {
     }
   }
 }
+
+// Format XML
+export function formatXML(xml: string, indent: number = 2): string {
+  const indentStr = ' '.repeat(indent)
+  let formatted = ''
+  let indentLevel = 0
+
+  xml.split(/>\s*</).forEach((node, index, array) => {
+    if (index > 0) {
+      node = '<' + node
+    }
+    if (index < array.length - 1) {
+      node = node + '>'
+    }
+
+    if (node.match(/^<\/\w/)) {
+      indentLevel--
+    }
+
+    formatted += indentStr.repeat(indentLevel) + node + '\n'
+
+    if (node.match(/^<\w[^>]*[^\/]>$/)) {
+      indentLevel++
+    }
+  })
+
+  return formatted.trim()
+}
+
+// Minify XML
+export function minifyXML(xml: string): string {
+  return xml.replace(/>\s+</g, '><').replace(/\s+/g, ' ').trim()
+}
+
+// Generate JWT token (simple - no real signing)
+export function generateJWT(
+  payload: Record<string, any>,
+  secret: string = 'your-secret-key',
+  expiresIn: number = 3600
+): string {
+  const header = {
+    alg: 'HS256',
+    typ: 'JWT'
+  }
+
+  // Add standard claims
+  const now = Math.floor(Date.now() / 1000)
+  const claims = {
+    ...payload,
+    iat: now,
+    exp: now + expiresIn
+  }
+
+  // Base64 encode header and payload
+  const encodedHeader = btoa(JSON.stringify(header))
+  const encodedPayload = btoa(JSON.stringify(claims))
+
+  // Simple signature (not cryptographically secure - for demo only)
+  const signature = btoa(secret + encodedHeader + encodedPayload).substring(0, 43)
+
+  return `${encodedHeader}.${encodedPayload}.${signature}`
+}
+
+// Convert CSV to JSON
+export function csvToJSON(csv: string): string {
+  const lines = csv.trim().split('\n')
+  if (lines.length < 2) {
+    throw new Error('CSV must have at least a header row and one data row')
+  }
+
+  const headers = lines[0].split(',').map(h => h.trim())
+  const result: any[] = []
+
+  for (let i = 1; i < lines.length; i++) {
+    const values = lines[i].split(',').map(v => v.trim())
+    const obj: any = {}
+
+    headers.forEach((header, index) => {
+      const value = values[index] || ''
+      // Try to parse as number
+      obj[header] = !isNaN(Number(value)) && value !== '' ? Number(value) : value
+    })
+
+    result.push(obj)
+  }
+
+  return JSON.stringify(result, null, 2)
+}
+
+// Convert JSON to CSV
+export function jsonToCSV(json: string): string {
+  const data = JSON.parse(json)
+
+  if (!Array.isArray(data) || data.length === 0) {
+    throw new Error('JSON must be an array of objects')
+  }
+
+  // Get headers from first object
+  const headers = Object.keys(data[0])
+  const csvLines: string[] = []
+
+  // Add header row
+  csvLines.push(headers.join(','))
+
+  // Add data rows
+  data.forEach(obj => {
+    const values = headers.map(header => {
+      const value = obj[header]
+      // Wrap in quotes if contains comma
+      return typeof value === 'string' && value.includes(',') ? `"${value}"` : value
+    })
+    csvLines.push(values.join(','))
+  })
+
+  return csvLines.join('\n')
+}
+
+// Generate secure password
+export function generatePassword(
+  length: number = 16,
+  options: {
+    uppercase?: boolean
+    lowercase?: boolean
+    numbers?: boolean
+    symbols?: boolean
+  } = {}
+): string {
+  const {
+    uppercase = true,
+    lowercase = true,
+    numbers = true,
+    symbols = true
+  } = options
+
+  let chars = ''
+  if (uppercase) chars += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+  if (lowercase) chars += 'abcdefghijklmnopqrstuvwxyz'
+  if (numbers) chars += '0123456789'
+  if (symbols) chars += '!@#$%^&*()_+-=[]{}|;:,.<>?'
+
+  if (chars.length === 0) {
+    throw new Error('At least one character type must be selected')
+  }
+
+  let password = ''
+  const crypto = window.crypto || (window as any).msCrypto
+  const array = new Uint32Array(length)
+  crypto.getRandomValues(array)
+
+  for (let i = 0; i < length; i++) {
+    password += chars[array[i] % chars.length]
+  }
+
+  return password
+}
+
+// Convert JSON to YAML
+export function jsonToYAML(json: string, indent: number = 2): string {
+  const obj = JSON.parse(json)
+  return convertToYAML(obj, 0, indent)
+}
+
+function convertToYAML(obj: any, depth: number, indent: number): string {
+  const indentStr = ' '.repeat(indent)
+  let yaml = ''
+
+  if (Array.isArray(obj)) {
+    obj.forEach(item => {
+      yaml += indentStr.repeat(depth) + '- '
+      if (typeof item === 'object' && item !== null) {
+        yaml += '\n' + convertToYAML(item, depth + 1, indent)
+      } else {
+        yaml += formatYAMLValue(item) + '\n'
+      }
+    })
+  } else if (typeof obj === 'object' && obj !== null) {
+    Object.keys(obj).forEach(key => {
+      yaml += indentStr.repeat(depth) + key + ': '
+      if (typeof obj[key] === 'object' && obj[key] !== null) {
+        yaml += '\n' + convertToYAML(obj[key], depth + 1, indent)
+      } else {
+        yaml += formatYAMLValue(obj[key]) + '\n'
+      }
+    })
+  } else {
+    yaml = formatYAMLValue(obj)
+  }
+
+  return yaml
+}
+
+function formatYAMLValue(value: any): string {
+  if (typeof value === 'string') {
+    // Quote strings with special characters
+    if (value.includes(':') || value.includes('#') || value.includes('\n')) {
+      return `"${value}"`
+    }
+    return value
+  }
+  if (value === null || value === undefined) {
+    return 'null'
+  }
+  return String(value)
+}
+
+// Convert YAML to JSON (simple parser)
+export function yamlToJSON(yaml: string): string {
+  const lines = yaml.trim().split('\n')
+  const result: any = {}
+  const stack: any[] = [{ obj: result, indent: -1 }]
+
+  lines.forEach(line => {
+    const indent = line.search(/\S/)
+    const trimmed = line.trim()
+
+    if (trimmed.startsWith('#') || trimmed === '') {
+      return // Skip comments and empty lines
+    }
+
+    // Pop stack until we find the right parent
+    while (stack.length > 1 && indent <= stack[stack.length - 1].indent) {
+      stack.pop()
+    }
+
+    const parent = stack[stack.length - 1].obj
+
+    if (trimmed.startsWith('- ')) {
+      // Array item
+      const value = trimmed.substring(2).trim()
+      if (!Array.isArray(parent)) {
+        throw new Error('Invalid YAML: array item without array context')
+      }
+      if (value.includes(':')) {
+        const obj = {}
+        parent.push(obj)
+        stack.push({ obj, indent })
+        parseKeyValue(value, obj)
+      } else {
+        parent.push(parseValue(value))
+      }
+    } else if (trimmed.includes(':')) {
+      parseKeyValue(trimmed, parent)
+      const [key] = trimmed.split(':')
+      if (trimmed.endsWith(':')) {
+        // Object or array coming
+        const nextLine = lines[lines.indexOf(line) + 1]
+        if (nextLine && nextLine.trim().startsWith('- ')) {
+          parent[key.trim()] = []
+          stack.push({ obj: parent[key.trim()], indent })
+        } else {
+          parent[key.trim()] = {}
+          stack.push({ obj: parent[key.trim()], indent })
+        }
+      }
+    }
+  })
+
+  return JSON.stringify(result, null, 2)
+}
+
+function parseKeyValue(line: string, obj: any) {
+  const colonIndex = line.indexOf(':')
+  const key = line.substring(0, colonIndex).trim()
+  const value = line.substring(colonIndex + 1).trim()
+
+  if (value) {
+    obj[key] = parseValue(value)
+  }
+}
+
+function parseValue(value: string): any {
+  // Remove quotes
+  if ((value.startsWith('"') && value.endsWith('"')) ||
+      (value.startsWith("'") && value.endsWith("'"))) {
+    return value.substring(1, value.length - 1)
+  }
+
+  // Parse boolean
+  if (value === 'true') return true
+  if (value === 'false') return false
+
+  // Parse null
+  if (value === 'null' || value === '~') return null
+
+  // Parse number
+  if (!isNaN(Number(value))) {
+    return Number(value)
+  }
+
+  return value
+}
