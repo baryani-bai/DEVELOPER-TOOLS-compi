@@ -37,6 +37,11 @@ import DuplicateLineRemover from '@/components/tools/DuplicateLineRemover'
 import RandomStringGenerator from '@/components/tools/RandomStringGenerator'
 import UnicodeCharacterFinder from '@/components/tools/UnicodeCharacterFinder'
 import BackslashEscaper from '@/components/tools/BackslashEscaper'
+import SlugGenerator from '@/components/tools/SlugGenerator'
+import TextReverser from '@/components/tools/TextReverser'
+import WhitespaceRemover from '@/components/tools/WhitespaceRemover'
+import BinaryTextConverter from '@/components/tools/BinaryTextConverter'
+import MorseCodeConverter from '@/components/tools/MorseCodeConverter'
 
 // Tool component mapper
 const toolComponents: Record<string, React.ComponentType> = {
@@ -75,6 +80,11 @@ const toolComponents: Record<string, React.ComponentType> = {
   'random-string-generator': RandomStringGenerator,
   'unicode-character-finder': UnicodeCharacterFinder,
   'backslash-escaper': BackslashEscaper,
+  'slug-generator': SlugGenerator,
+  'text-reverser': TextReverser,
+  'whitespace-remover': WhitespaceRemover,
+  'binary-text-converter': BinaryTextConverter,
+  'morse-code-converter': MorseCodeConverter,
 }
 
 // Generate static params for all tools

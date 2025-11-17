@@ -1261,3 +1261,137 @@ export function searchUnicodeCharacters(query: string): Array<{ char: string; co
 
   return results
 }
+
+// Generate URL-friendly slug from text
+export function generateSlug(text: string, options: {
+  separator: string
+  lowercase: boolean
+  removeSpecialChars: boolean
+}): string {
+  let slug = text.trim()
+
+  // Convert to lowercase if requested
+  if (options.lowercase) {
+    slug = slug.toLowerCase()
+  }
+
+  // Remove accents and diacritics
+  slug = slug.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+
+  // Remove special characters if requested
+  if (options.removeSpecialChars) {
+    slug = slug.replace(/[^\w\s-]/g, '')
+  }
+
+  // Replace spaces with separator
+  slug = slug.replace(/\s+/g, options.separator)
+
+  // Remove multiple consecutive separators
+  const separatorRegex = new RegExp(`\\${options.separator}+`, 'g')
+  slug = slug.replace(separatorRegex, options.separator)
+
+  // Remove leading/trailing separators
+  const trimRegex = new RegExp(`^\\${options.separator}+|\\${options.separator}+$`, 'g')
+  slug = slug.replace(trimRegex, '')
+
+  return slug
+}
+
+// Reverse text with different modes
+export function reverseText(text: string, mode: 'characters' | 'words' | 'lines'): string {
+  switch (mode) {
+    case 'characters':
+      return text.split('').reverse().join('')
+    case 'words':
+      return text.split(' ').reverse().join(' ')
+    case 'lines':
+      return text.split('\n').reverse().join('\n')
+    default:
+      return text
+  }
+}
+
+// Remove various types of whitespace
+export function removeWhitespace(text: string, options: {
+  removeLeading: boolean
+  removeTrailing: boolean
+  removeMultiple: boolean
+  removeAllSpaces: boolean
+  removeLineBreaks: boolean
+}): string {
+  let result = text
+
+  if (options.removeAllSpaces) {
+    return result.replace(/\s+/g, '')
+  }
+
+  if (options.removeLineBreaks) {
+    result = result.replace(/\n+/g, ' ')
+  }
+
+  if (options.removeMultiple) {
+    result = result.replace(/ +/g, ' ')
+  }
+
+  if (options.removeLeading || options.removeTrailing) {
+    const lines = result.split('\n')
+    result = lines.map(line => {
+      if (options.removeLeading && options.removeTrailing) {
+        return line.trim()
+      } else if (options.removeLeading) {
+        return line.replace(/^\s+/, '')
+      } else if (options.removeTrailing) {
+        return line.replace(/\s+$/, '')
+      }
+      return line
+    }).join('\n')
+  }
+
+  return result
+}
+
+// Convert text to binary and vice versa
+export function textToBinary(text: string): string {
+  return text.split('').map(char => {
+    return char.charCodeAt(0).toString(2).padStart(8, '0')
+  }).join(' ')
+}
+
+export function binaryToText(binary: string): string {
+  const bytes = binary.replace(/\s/g, '').match(/.{1,8}/g) || []
+  return bytes.map(byte => {
+    return String.fromCharCode(parseInt(byte, 2))
+  }).join('')
+}
+
+// Morse code mapping
+export const morseCodeMap: Record<string, string> = {
+  'A': '.-', 'B': '-...', 'C': '-.-.', 'D': '-..', 'E': '.', 'F': '..-.',
+  'G': '--.', 'H': '....', 'I': '..', 'J': '.---', 'K': '-.-', 'L': '.-..',
+  'M': '--', 'N': '-.', 'O': '---', 'P': '.--.', 'Q': '--.-', 'R': '.-.',
+  'S': '...', 'T': '-', 'U': '..-', 'V': '...-', 'W': '.--', 'X': '-..-',
+  'Y': '-.--', 'Z': '--..', '0': '-----', '1': '.----', '2': '..---',
+  '3': '...--', '4': '....-', '5': '.....', '6': '-....', '7': '--...',
+  '8': '---..', '9': '----.', '.': '.-.-.-', ',': '--..--', '?': '..--..',
+  '\'': '.----.', '!': '-.-.--', '/': '-..-.', '(': '-.--.', ')': '-.--.-',
+  '&': '.-...', ':': '---...', ';': '-.-.-.', '=': '-...-', '+': '.-.-.',
+  '-': '-....-', '_': '..--.-', '"': '.-..-.', '$': '...-..-', '@': '.--.-.',
+  ' ': '/'
+}
+
+export const morseToTextMap: Record<string, string> = Object.entries(morseCodeMap).reduce((acc, [key, value]) => {
+  acc[value] = key
+  return acc
+}, {} as Record<string, string>)
+
+export function textToMorse(text: string): string {
+  return text.toUpperCase().split('').map(char => {
+    return morseCodeMap[char] || char
+  }).join(' ')
+}
+
+export function morseToText(morse: string): string {
+  return morse.split(' ').map(code => {
+    return morseToTextMap[code] || code
+  }).join('')
+}
