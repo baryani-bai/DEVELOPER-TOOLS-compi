@@ -47,6 +47,11 @@ import JSONToXMLConverter from '@/components/tools/JSONToXMLConverter'
 import URLParser from '@/components/tools/URLParser'
 import YAMLFormatter from '@/components/tools/YAMLFormatter'
 import HexColorConverter from '@/components/tools/HexColorConverter'
+import JSONDiffViewer from '@/components/tools/JSONDiffViewer'
+import TemplateFormatter from '@/components/tools/TemplateFormatter'
+import FileSizeConverter from '@/components/tools/FileSizeConverter'
+import UnixPermissionsCalculator from '@/components/tools/UnixPermissionsCalculator'
+import EmailURLValidator from '@/components/tools/EmailURLValidator'
 
 // Tool component mapper
 const toolComponents: Record<string, React.ComponentType> = {
@@ -95,6 +100,11 @@ const toolComponents: Record<string, React.ComponentType> = {
   'url-parser': URLParser,
   'yaml-formatter': YAMLFormatter,
   'hex-color-converter': HexColorConverter,
+  'json-diff-viewer': JSONDiffViewer,
+  'template-formatter': TemplateFormatter,
+  'file-size-converter': FileSizeConverter,
+  'unix-permissions': UnixPermissionsCalculator,
+  'email-url-validator': EmailURLValidator,
 }
 
 // Generate static params for all tools

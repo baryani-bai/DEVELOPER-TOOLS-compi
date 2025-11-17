@@ -1574,3 +1574,181 @@ export function hslToRgb(h: number, s: number, l: number): { r: number; g: numbe
     b: Math.round(b * 255),
   }
 }
+
+// JSON Diff - Compare two JSON objects
+export function compareJSON(json1: string, json2: string): {
+  differences: Array<{ path: string; old: any; new: any; type: 'added' | 'removed' | 'changed' }>
+  identical: boolean
+} {
+  const obj1 = JSON.parse(json1)
+  const obj2 = JSON.parse(json2)
+
+  const differences: Array<{ path: string; old: any; new: any; type: 'added' | 'removed' | 'changed' }> = []
+
+  function compare(o1: any, o2: any, path: string = '') {
+    const keys1 = o1 ? Object.keys(o1) : []
+    const keys2 = o2 ? Object.keys(o2) : []
+    const allKeys = new Set([...keys1, ...keys2])
+
+    allKeys.forEach(key => {
+      const newPath = path ? `${path}.${key}` : key
+      const val1 = o1?.[key]
+      const val2 = o2?.[key]
+
+      if (!(key in (o1 || {}))) {
+        differences.push({ path: newPath, old: undefined, new: val2, type: 'added' })
+      } else if (!(key in (o2 || {}))) {
+        differences.push({ path: newPath, old: val1, new: undefined, type: 'removed' })
+      } else if (typeof val1 === 'object' && typeof val2 === 'object' && val1 !== null && val2 !== null) {
+        compare(val1, val2, newPath)
+      } else if (val1 !== val2) {
+        differences.push({ path: newPath, old: val1, new: val2, type: 'changed' })
+      }
+    })
+  }
+
+  compare(obj1, obj2)
+
+  return {
+    differences,
+    identical: differences.length === 0
+  }
+}
+
+// Template string formatting
+export function formatTemplate(template: string, variables: Record<string, string>): string {
+  let result = template
+
+  // Support {{variable}} syntax
+  Object.entries(variables).forEach(([key, value]) => {
+    const regex = new RegExp(`\\{\\{\\s*${key}\\s*\\}\\}`, 'g')
+    result = result.replace(regex, value)
+  })
+
+  // Support ${variable} syntax
+  Object.entries(variables).forEach(([key, value]) => {
+    const regex = new RegExp(`\\$\\{\\s*${key}\\s*\\}`, 'g')
+    result = result.replace(regex, value)
+  })
+
+  return result
+}
+
+// File size conversion
+export function convertFileSize(value: number, fromUnit: string, toUnit: string): number {
+  const units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB']
+  const fromIndex = units.indexOf(fromUnit.toUpperCase())
+  const toIndex = units.indexOf(toUnit.toUpperCase())
+
+  if (fromIndex === -1 || toIndex === -1) {
+    throw new Error('Invalid unit')
+  }
+
+  // Convert to bytes first
+  const bytes = value * Math.pow(1024, fromIndex)
+
+  // Convert to target unit
+  return bytes / Math.pow(1024, toIndex)
+}
+
+export function formatFileSize(bytes: number): string {
+  const units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB']
+  let size = bytes
+  let unitIndex = 0
+
+  while (size >= 1024 && unitIndex < units.length - 1) {
+    size /= 1024
+    unitIndex++
+  }
+
+  return `${size.toFixed(2)} ${units[unitIndex]}`
+}
+
+// Unix permissions calculator
+export function chmodToRWX(chmod: string): { user: string; group: string; other: string } {
+  if (chmod.length !== 3 || !/^\d{3}$/.test(chmod)) {
+    throw new Error('Invalid chmod format. Use 3 digits (e.g., 755)')
+  }
+
+  const toRWX = (num: number): string => {
+    const r = num & 4 ? 'r' : '-'
+    const w = num & 2 ? 'w' : '-'
+    const x = num & 1 ? 'x' : '-'
+    return r + w + x
+  }
+
+  return {
+    user: toRWX(parseInt(chmod[0])),
+    group: toRWX(parseInt(chmod[1])),
+    other: toRWX(parseInt(chmod[2]))
+  }
+}
+
+export function rwxToChmod(rwx: string): string {
+  if (rwx.length !== 9) {
+    throw new Error('Invalid rwx format. Use 9 characters (e.g., rwxr-xr-x)')
+  }
+
+  const toNum = (str: string): number => {
+    let num = 0
+    if (str[0] === 'r') num += 4
+    if (str[1] === 'w') num += 2
+    if (str[2] === 'x') num += 1
+    return num
+  }
+
+  const user = toNum(rwx.substring(0, 3))
+  const group = toNum(rwx.substring(3, 6))
+  const other = toNum(rwx.substring(6, 9))
+
+  return `${user}${group}${other}`
+}
+
+// Email and URL validation
+export function validateEmail(email: string): { valid: boolean; error?: string } {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+  if (!email.trim()) {
+    return { valid: false, error: 'Email is required' }
+  }
+
+  if (!emailRegex.test(email)) {
+    return { valid: false, error: 'Invalid email format' }
+  }
+
+  // Additional checks
+  const parts = email.split('@')
+  if (parts[0].length > 64) {
+    return { valid: false, error: 'Local part too long (max 64 characters)' }
+  }
+
+  if (parts[1].length > 255) {
+    return { valid: false, error: 'Domain too long (max 255 characters)' }
+  }
+
+  return { valid: true }
+}
+
+export function validateURL(url: string): { valid: boolean; error?: string } {
+  if (!url.trim()) {
+    return { valid: false, error: 'URL is required' }
+  }
+
+  try {
+    const urlObj = new URL(url)
+
+    // Check for valid protocol
+    if (!['http:', 'https:', 'ftp:', 'ftps:'].includes(urlObj.protocol)) {
+      return { valid: false, error: 'Invalid protocol. Use http, https, ftp, or ftps' }
+    }
+
+    // Check for hostname
+    if (!urlObj.hostname) {
+      return { valid: false, error: 'Missing hostname' }
+    }
+
+    return { valid: true }
+  } catch (err) {
+    return { valid: false, error: 'Invalid URL format' }
+  }
+}
