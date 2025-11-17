@@ -12,6 +12,11 @@ import TextCaseConverter from '@/components/tools/TextCaseConverter'
 import TextDiffChecker from '@/components/tools/TextDiffChecker'
 import HtmlFormatter from '@/components/tools/HtmlFormatter'
 import CssFormatter from '@/components/tools/CssFormatter'
+import MarkdownEditor from '@/components/tools/MarkdownEditor'
+import ColorPicker from '@/components/tools/ColorPicker'
+import TimestampConverter from '@/components/tools/TimestampConverter'
+import RegexTester from '@/components/tools/RegexTester'
+import JWTDecoder from '@/components/tools/JWTDecoder'
 
 // Tool component mapper
 const toolComponents: Record<string, React.ComponentType> = {
@@ -25,6 +30,11 @@ const toolComponents: Record<string, React.ComponentType> = {
   'text-diff-checker': TextDiffChecker,
   'html-formatter': HtmlFormatter,
   'css-formatter': CssFormatter,
+  'markdown-editor': MarkdownEditor,
+  'color-picker': ColorPicker,
+  'timestamp-converter': TimestampConverter,
+  'regex-tester': RegexTester,
+  'jwt-decoder': JWTDecoder,
 }
 
 // Generate static params for all tools
