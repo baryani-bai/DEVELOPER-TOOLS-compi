@@ -32,6 +32,11 @@ import NumberBaseConverter from '@/components/tools/NumberBaseConverter'
 import TextEscaper from '@/components/tools/TextEscaper'
 import JSONPathTester from '@/components/tools/JSONPathTester'
 import StringCounter from '@/components/tools/StringCounter'
+import TextSorter from '@/components/tools/TextSorter'
+import DuplicateLineRemover from '@/components/tools/DuplicateLineRemover'
+import RandomStringGenerator from '@/components/tools/RandomStringGenerator'
+import UnicodeCharacterFinder from '@/components/tools/UnicodeCharacterFinder'
+import BackslashEscaper from '@/components/tools/BackslashEscaper'
 
 // Tool component mapper
 const toolComponents: Record<string, React.ComponentType> = {
@@ -65,6 +70,11 @@ const toolComponents: Record<string, React.ComponentType> = {
   'text-escaper': TextEscaper,
   'jsonpath-tester': JSONPathTester,
   'string-counter': StringCounter,
+  'text-sorter': TextSorter,
+  'duplicate-line-remover': DuplicateLineRemover,
+  'random-string-generator': RandomStringGenerator,
+  'unicode-character-finder': UnicodeCharacterFinder,
+  'backslash-escaper': BackslashEscaper,
 }
 
 // Generate static params for all tools

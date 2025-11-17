@@ -1081,3 +1081,183 @@ export function countString(text: string): {
     paragraphs
   }
 }
+
+// Text sorting
+export function sortText(text: string, options: {
+  method: 'alphabetical' | 'numerical' | 'length'
+  direction: 'asc' | 'desc'
+  caseSensitive: boolean
+}): string {
+  const lines = text.split('\n')
+
+  let sorted = [...lines]
+
+  switch (options.method) {
+    case 'alphabetical':
+      sorted.sort((a, b) => {
+        const strA = options.caseSensitive ? a : a.toLowerCase()
+        const strB = options.caseSensitive ? b : b.toLowerCase()
+        return strA.localeCompare(strB)
+      })
+      break
+    case 'numerical':
+      sorted.sort((a, b) => {
+        const numA = parseFloat(a)
+        const numB = parseFloat(b)
+        return numA - numB
+      })
+      break
+    case 'length':
+      sorted.sort((a, b) => a.length - b.length)
+      break
+  }
+
+  if (options.direction === 'desc') {
+    sorted.reverse()
+  }
+
+  return sorted.join('\n')
+}
+
+// Remove duplicate lines
+export function removeDuplicateLines(text: string, caseSensitive: boolean = true): string {
+  const lines = text.split('\n')
+  const seen = new Set<string>()
+  const unique: string[] = []
+
+  lines.forEach(line => {
+    const key = caseSensitive ? line : line.toLowerCase()
+    if (!seen.has(key)) {
+      seen.add(key)
+      unique.push(line)
+    }
+  })
+
+  return unique.join('\n')
+}
+
+// Generate random string
+export function generateRandomString(
+  length: number,
+  options: {
+    type: 'alphanumeric' | 'alphabetic' | 'numeric' | 'hex' | 'custom'
+    customChars?: string
+  }
+): string {
+  let chars = ''
+
+  switch (options.type) {
+    case 'alphanumeric':
+      chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+      break
+    case 'alphabetic':
+      chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
+      break
+    case 'numeric':
+      chars = '0123456789'
+      break
+    case 'hex':
+      chars = '0123456789ABCDEF'
+      break
+    case 'custom':
+      chars = options.customChars || 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+      break
+  }
+
+  let result = ''
+  const crypto = window.crypto || (window as any).msCrypto
+  const array = new Uint32Array(length)
+  crypto.getRandomValues(array)
+
+  for (let i = 0; i < length; i++) {
+    result += chars[array[i] % chars.length]
+  }
+
+  return result
+}
+
+// Backslash escape/unescape
+export function addBackslashes(text: string): string {
+  return text
+    .replace(/\\/g, '\\\\')
+    .replace(/'/g, "\\'")
+    .replace(/"/g, '\\"')
+    .replace(/\n/g, '\\n')
+    .replace(/\r/g, '\\r')
+    .replace(/\t/g, '\\t')
+    .replace(/\f/g, '\\f')
+    .replace(/\v/g, '\\v')
+}
+
+export function removeBackslashes(text: string): string {
+  return text
+    .replace(/\\n/g, '\n')
+    .replace(/\\r/g, '\r')
+    .replace(/\\t/g, '\t')
+    .replace(/\\f/g, '\f')
+    .replace(/\\v/g, '\v')
+    .replace(/\\'/g, "'")
+    .replace(/\\"/g, '"')
+    .replace(/\\\\/g, '\\')
+}
+
+// Common Unicode characters database
+export const unicodeCategories = {
+  'Common': [
+    { char: '©', code: 'U+00A9', name: 'Copyright Sign' },
+    { char: '®', code: 'U+00AE', name: 'Registered Sign' },
+    { char: '™', code: 'U+2122', name: 'Trade Mark Sign' },
+    { char: '€', code: 'U+20AC', name: 'Euro Sign' },
+    { char: '£', code: 'U+00A3', name: 'Pound Sign' },
+    { char: '¥', code: 'U+00A5', name: 'Yen Sign' },
+  ],
+  'Arrows': [
+    { char: '←', code: 'U+2190', name: 'Leftwards Arrow' },
+    { char: '→', code: 'U+2192', name: 'Rightwards Arrow' },
+    { char: '↑', code: 'U+2191', name: 'Upwards Arrow' },
+    { char: '↓', code: 'U+2193', name: 'Downwards Arrow' },
+    { char: '↔', code: 'U+2194', name: 'Left Right Arrow' },
+    { char: '⇒', code: 'U+21D2', name: 'Rightwards Double Arrow' },
+  ],
+  'Math': [
+    { char: '±', code: 'U+00B1', name: 'Plus-Minus Sign' },
+    { char: '×', code: 'U+00D7', name: 'Multiplication Sign' },
+    { char: '÷', code: 'U+00F7', name: 'Division Sign' },
+    { char: '≠', code: 'U+2260', name: 'Not Equal To' },
+    { char: '≈', code: 'U+2248', name: 'Almost Equal To' },
+    { char: '∞', code: 'U+221E', name: 'Infinity' },
+  ],
+  'Shapes': [
+    { char: '■', code: 'U+25A0', name: 'Black Square' },
+    { char: '□', code: 'U+25A1', name: 'White Square' },
+    { char: '●', code: 'U+25CF', name: 'Black Circle' },
+    { char: '○', code: 'U+25CB', name: 'White Circle' },
+    { char: '★', code: 'U+2605', name: 'Black Star' },
+    { char: '☆', code: 'U+2606', name: 'White Star' },
+  ],
+  'Punctuation': [
+    { char: '…', code: 'U+2026', name: 'Horizontal Ellipsis' },
+    { char: '•', code: 'U+2022', name: 'Bullet' },
+    { char: '‰', code: 'U+2030', name: 'Per Mille Sign' },
+    { char: '′', code: 'U+2032', name: 'Prime' },
+    { char: '″', code: 'U+2033', name: 'Double Prime' },
+    { char: '‹', code: 'U+2039', name: 'Single Left-Pointing Angle Quotation' },
+  ]
+}
+
+export function searchUnicodeCharacters(query: string): Array<{ char: string; code: string; name: string }> {
+  const results: Array<{ char: string; code: string; name: string }> = []
+  const lowerQuery = query.toLowerCase()
+
+  Object.values(unicodeCategories).forEach(category => {
+    category.forEach(item => {
+      if (item.name.toLowerCase().includes(lowerQuery) ||
+          item.code.toLowerCase().includes(lowerQuery) ||
+          item.char === query) {
+        results.push(item)
+      }
+    })
+  })
+
+  return results
+}
