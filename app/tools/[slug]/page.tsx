@@ -17,6 +17,11 @@ import ColorPicker from '@/components/tools/ColorPicker'
 import TimestampConverter from '@/components/tools/TimestampConverter'
 import RegexTester from '@/components/tools/RegexTester'
 import JWTDecoder from '@/components/tools/JWTDecoder'
+import JavaScriptFormatter from '@/components/tools/JavaScriptFormatter'
+import SQLFormatter from '@/components/tools/SQLFormatter'
+import QRCodeGenerator from '@/components/tools/QRCodeGenerator'
+import ImageToBase64 from '@/components/tools/ImageToBase64'
+import CronParser from '@/components/tools/CronParser'
 
 // Tool component mapper
 const toolComponents: Record<string, React.ComponentType> = {
@@ -35,6 +40,11 @@ const toolComponents: Record<string, React.ComponentType> = {
   'timestamp-converter': TimestampConverter,
   'regex-tester': RegexTester,
   'jwt-decoder': JWTDecoder,
+  'javascript-formatter': JavaScriptFormatter,
+  'sql-formatter': SQLFormatter,
+  'qr-code-generator': QRCodeGenerator,
+  'image-to-base64': ImageToBase64,
+  'cron-parser': CronParser,
 }
 
 // Generate static params for all tools

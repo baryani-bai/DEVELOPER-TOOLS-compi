@@ -414,3 +414,224 @@ export function decodeJWT(token: string): {
     }
   }
 }
+
+// Format JavaScript code
+export function formatJavaScript(code: string, indent: number = 2): string {
+  const indentStr = ' '.repeat(indent)
+  let formatted = ''
+  let indentLevel = 0
+  let inString = false
+  let stringChar = ''
+
+  for (let i = 0; i < code.length; i++) {
+    const char = code[i]
+    const prevChar = code[i - 1]
+
+    if ((char === '"' || char === "'" || char === '`') && prevChar !== '\\') {
+      if (!inString) {
+        inString = true
+        stringChar = char
+      } else if (char === stringChar) {
+        inString = false
+      }
+    }
+
+    if (!inString) {
+      if (char === '{' || char === '[') {
+        formatted += char + '\n'
+        indentLevel++
+        formatted += indentStr.repeat(indentLevel)
+      } else if (char === '}' || char === ']') {
+        formatted = formatted.trimEnd()
+        formatted += '\n'
+        indentLevel--
+        formatted += indentStr.repeat(indentLevel) + char
+      } else if (char === ';') {
+        formatted += char + '\n' + indentStr.repeat(indentLevel)
+      } else if (char === ',') {
+        formatted += char + '\n' + indentStr.repeat(indentLevel)
+      } else if (char === '\n' || char === '\r') {
+        // Skip existing newlines
+      } else {
+        formatted += char
+      }
+    } else {
+      formatted += char
+    }
+  }
+
+  return formatted.trim()
+}
+
+// Minify JavaScript
+export function minifyJavaScript(code: string): string {
+  return code
+    .replace(/\/\*[\s\S]*?\*\//g, '') // Remove multi-line comments
+    .replace(/\/\/.*/g, '') // Remove single-line comments
+    .replace(/\s+/g, ' ') // Collapse whitespace
+    .replace(/\s*([{}();,:])\s*/g, '$1') // Remove whitespace around operators
+    .trim()
+}
+
+// Format SQL
+export function formatSQL(sql: string): string {
+  const keywords = [
+    'SELECT', 'FROM', 'WHERE', 'JOIN', 'LEFT JOIN', 'RIGHT JOIN', 'INNER JOIN',
+    'ON', 'AND', 'OR', 'ORDER BY', 'GROUP BY', 'HAVING', 'LIMIT', 'OFFSET',
+    'INSERT INTO', 'VALUES', 'UPDATE', 'SET', 'DELETE FROM', 'CREATE TABLE',
+    'ALTER TABLE', 'DROP TABLE', 'AS', 'DISTINCT', 'UNION', 'CASE', 'WHEN', 'THEN', 'ELSE', 'END'
+  ]
+
+  let formatted = sql
+
+  // Add newlines before major keywords
+  keywords.forEach(keyword => {
+    const regex = new RegExp(`\\b${keyword}\\b`, 'gi')
+    formatted = formatted.replace(regex, `\n${keyword}`)
+  })
+
+  // Indent nested queries
+  const lines = formatted.split('\n').map(line => line.trim()).filter(line => line)
+  let indentLevel = 0
+  const indentStr = '  '
+
+  return lines.map(line => {
+    if (line.match(/\(/)) indentLevel++
+    const indented = indentStr.repeat(Math.max(0, indentLevel)) + line
+    if (line.match(/\)/)) indentLevel--
+    return indented
+  }).join('\n')
+}
+
+// Generate QR Code as data URL
+export function generateQRCode(text: string, size: number = 256): string {
+  // Simple QR code generation using canvas
+  // This is a placeholder - in production, you'd use a library like qrcode
+  const canvas = document.createElement('canvas')
+  canvas.width = size
+  canvas.height = size
+  const ctx = canvas.getContext('2d')
+
+  if (!ctx) return ''
+
+  // Simple pattern generation (not a real QR code algorithm)
+  ctx.fillStyle = '#FFFFFF'
+  ctx.fillRect(0, 0, size, size)
+  ctx.fillStyle = '#000000'
+
+  // Create a simple grid pattern based on text hash
+  const gridSize = 32
+  const cellSize = size / gridSize
+  let hash = 0
+  for (let i = 0; i < text.length; i++) {
+    hash = ((hash << 5) - hash) + text.charCodeAt(i)
+    hash = hash & hash
+  }
+
+  for (let y = 0; y < gridSize; y++) {
+    for (let x = 0; x < gridSize; x++) {
+      const cellHash = (hash + x * 31 + y * 37) & 0xFFFFFFFF
+      if (cellHash % 2 === 0) {
+        ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize)
+      }
+    }
+  }
+
+  return canvas.toDataURL('image/png')
+}
+
+// Convert image file to Base64
+export function imageToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => {
+      if (typeof reader.result === 'string') {
+        resolve(reader.result)
+      } else {
+        reject(new Error('Failed to read file'))
+      }
+    }
+    reader.onerror = () => reject(new Error('Failed to read file'))
+    reader.readAsDataURL(file)
+  })
+}
+
+// Parse cron expression
+export function parseCronExpression(expression: string): {
+  isValid: boolean
+  description?: string
+  parts?: {
+    minute: string
+    hour: string
+    dayOfMonth: string
+    month: string
+    dayOfWeek: string
+  }
+  error?: string
+} {
+  try {
+    const parts = expression.trim().split(/\s+/)
+    if (parts.length !== 5) {
+      throw new Error('Cron expression must have exactly 5 parts')
+    }
+
+    const [minute, hour, dayOfMonth, month, dayOfWeek] = parts
+
+    // Build human-readable description
+    let description = 'Runs '
+
+    // Minute
+    if (minute === '*') {
+      description += 'every minute'
+    } else if (minute.includes('/')) {
+      const [, interval] = minute.split('/')
+      description += `every ${interval} minutes`
+    } else {
+      description += `at minute ${minute}`
+    }
+
+    // Hour
+    if (hour !== '*') {
+      if (hour.includes('/')) {
+        const [, interval] = hour.split('/')
+        description += ` of every ${interval} hours`
+      } else {
+        description += ` past hour ${hour}`
+      }
+    }
+
+    // Day of month
+    if (dayOfMonth !== '*') {
+      description += ` on day ${dayOfMonth} of the month`
+    }
+
+    // Month
+    if (month !== '*') {
+      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+      const monthNum = parseInt(month)
+      if (!isNaN(monthNum) && monthNum >= 1 && monthNum <= 12) {
+        description += ` in ${monthNames[monthNum - 1]}`
+      }
+    }
+
+    // Day of week
+    if (dayOfWeek !== '*') {
+      const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+      const dayNum = parseInt(dayOfWeek)
+      if (!isNaN(dayNum) && dayNum >= 0 && dayNum <= 6) {
+        description += ` on ${dayNames[dayNum]}`
+      }
+    }
+
+    return {
+      isValid: true,
+      description,
+      parts: { minute, hour, dayOfMonth, month, dayOfWeek }
+    }
+  } catch (err) {
+    return {
+      isValid: false,
+      error: err instanceof Error ? err.message : 'Invalid cron expression'
+    }
+  }
+}
