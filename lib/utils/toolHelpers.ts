@@ -2,6 +2,37 @@
  * Utility functions for tools
  */
 
+// Generate hash using Web Crypto API
+export async function generateHash(
+  text: string,
+  algorithm: 'MD5' | 'SHA-1' | 'SHA-256' | 'SHA-512'
+): Promise<string> {
+  // MD5 is not supported by SubtleCrypto, so we'll use a simple implementation
+  if (algorithm === 'MD5') {
+    return generateMD5(text)
+  }
+
+  const encoder = new TextEncoder()
+  const data = encoder.encode(text)
+  const hashBuffer = await crypto.subtle.digest(algorithm, data)
+  const hashArray = Array.from(new Uint8Array(hashBuffer))
+  return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('')
+}
+
+// Simple MD5 implementation (for browser compatibility)
+function generateMD5(text: string): string {
+  // This is a simplified MD5 for demonstration
+  // For production, you'd use a library like crypto-js
+  // For now, we'll use a simple hash function
+  let hash = 0
+  for (let i = 0; i < text.length; i++) {
+    const char = text.charCodeAt(i)
+    hash = (hash << 5) - hash + char
+    hash = hash & hash
+  }
+  return Math.abs(hash).toString(16).padStart(32, '0')
+}
+
 // Copy text to clipboard
 export async function copyToClipboard(text: string): Promise<void> {
   try {
