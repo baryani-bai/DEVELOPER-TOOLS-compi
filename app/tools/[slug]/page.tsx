@@ -1,0 +1,144 @@
+import { Metadata } from 'next'
+import { notFound } from 'next/navigation'
+import { toolRegistry, getToolById } from '@/lib/constants/toolRegistry'
+import Container from '@/components/ui/Container'
+import JsonFormatter from '@/components/tools/JsonFormatter'
+import Base64EncoderDecoder from '@/components/tools/Base64EncoderDecoder'
+import UrlEncoderDecoder from '@/components/tools/UrlEncoderDecoder'
+import UuidGenerator from '@/components/tools/UuidGenerator'
+import LoremIpsumGenerator from '@/components/tools/LoremIpsumGenerator'
+
+// Tool component mapper
+const toolComponents: Record<string, React.ComponentType> = {
+  'json-formatter': JsonFormatter,
+  'base64-encoder': Base64EncoderDecoder,
+  'url-encoder': UrlEncoderDecoder,
+  'uuid-generator': UuidGenerator,
+  'lorem-ipsum': LoremIpsumGenerator,
+}
+
+// Generate static params for all tools
+export async function generateStaticParams() {
+  return toolRegistry.map((tool) => ({
+    slug: tool.id,
+  }))
+}
+
+// Generate metadata for each tool page
+export async function generateMetadata({
+  params,
+}: {
+  params: { slug: string }
+}): Promise<Metadata> {
+  const tool = getToolById(params.slug)
+
+  if (!tool) {
+    return {
+      title: 'Tool Not Found - CodeBox',
+      description: 'The requested tool could not be found.',
+    }
+  }
+
+  return {
+    title: `${tool.name} - CodeBox`,
+    description: tool.description,
+    keywords: [tool.name, ...tool.keywords, 'developer tool', 'free online tool'],
+  }
+}
+
+export default function ToolPage({ params }: { params: { slug: string } }) {
+  const tool = getToolById(params.slug)
+
+  if (!tool) {
+    notFound()
+  }
+
+  // Get the tool component
+  const ToolComponent = toolComponents[params.slug]
+
+  return (
+    <div className="py-8 md:py-12 bg-bg-primary">
+      <Container>
+        {/* Tool Header */}
+        <div className="mb-8">
+          <div className="flex items-center gap-4 mb-4">
+            <span className="text-5xl" aria-hidden="true">
+              {tool.icon}
+            </span>
+            <div>
+              <h1 className="font-mono text-3xl md:text-4xl font-bold text-text-primary mb-2">
+                {tool.name}
+              </h1>
+              <p className="text-lg text-text-secondary">{tool.description}</p>
+            </div>
+          </div>
+
+          {/* Features */}
+          {tool.features.length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-4">
+              {tool.features.map((feature, index) => (
+                <span
+                  key={index}
+                  className="text-xs font-mono text-accent-primary bg-bg-secondary border border-border-primary px-3 py-1"
+                >
+                  {feature}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Tool Component */}
+        {ToolComponent ? (
+          <ToolComponent />
+        ) : (
+          <div className="text-center py-16 bg-bg-secondary border border-border-primary">
+            <p className="font-mono text-xl text-text-secondary mb-4">
+              🚧 Tool Implementation Coming Soon
+            </p>
+            <p className="text-text-tertiary">
+              The <span className="text-accent-primary">{tool.name}</span> tool is
+              being built right now!
+            </p>
+          </div>
+        )}
+
+        {/* Tool Info */}
+        <div className="mt-8 bg-bg-secondary border border-border-primary p-6">
+          <h2 className="font-mono text-xl font-semibold text-text-primary mb-4">
+            About This Tool
+          </h2>
+          <div className="space-y-4 text-text-secondary">
+            <div>
+              <h3 className="font-mono text-sm text-accent-primary mb-2">
+                CATEGORY
+              </h3>
+              <p className="font-mono">{tool.category}</p>
+            </div>
+            <div>
+              <h3 className="font-mono text-sm text-accent-primary mb-2">
+                FEATURES
+              </h3>
+              <ul className="list-disc list-inside space-y-1">
+                {tool.features.map((feature, index) => (
+                  <li key={index}>{feature}</li>
+                ))}
+              </ul>
+            </div>
+            <div className="pt-4 border-t border-border-primary">
+              <p className="text-sm text-text-tertiary">
+                ✓ All processing happens in your browser
+              </p>
+              <p className="text-sm text-text-tertiary">
+                ✓ No data is sent to any server
+              </p>
+              <p className="text-sm text-text-tertiary">
+                ✓ 100% free and open source
+              </p>
+            </div>
+          </div>
+        </div>
+      </Container>
+    </div>
+  )
+}

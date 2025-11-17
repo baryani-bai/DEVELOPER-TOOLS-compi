@@ -3,6 +3,7 @@ import { JetBrains_Mono, Inter } from 'next/font/google'
 import '@/styles/globals.css'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
+import { ToastProvider } from '@/components/ui/Toast'
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
@@ -40,9 +41,11 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${jetbrainsMono.variable} ${inter.variable}`}>
       <body className="min-h-screen flex flex-col">
-        <Header />
-        <main className="flex-grow">{children}</main>
-        <Footer />
+        <ToastProvider>
+          <Header />
+          <main className="flex-grow">{children}</main>
+          <Footer />
+        </ToastProvider>
       </body>
     </html>
   )
