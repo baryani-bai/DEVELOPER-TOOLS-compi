@@ -67,6 +67,11 @@ import MIMETypeLookup from '@/components/tools/MIMETypeLookup'
 import ASCIITableReference from '@/components/tools/ASCIITableReference'
 import CSSGradientGenerator from '@/components/tools/CSSGradientGenerator'
 import CSSBoxShadowGenerator from '@/components/tools/CSSBoxShadowGenerator'
+import MarkdownTableGenerator from '@/components/tools/MarkdownTableGenerator'
+import LoremIpsumVariants from '@/components/tools/LoremIpsumVariants'
+import TextToASCIIArt from '@/components/tools/TextToASCIIArt'
+import TimezoneConverter from '@/components/tools/TimezoneConverter'
+import CreditCardValidator from '@/components/tools/CreditCardValidator'
 
 // Tool component mapper
 const toolComponents: Record<string, React.ComponentType> = {
@@ -135,6 +140,11 @@ const toolComponents: Record<string, React.ComponentType> = {
   'ascii-table-reference': ASCIITableReference,
   'css-gradient-generator': CSSGradientGenerator,
   'css-box-shadow-generator': CSSBoxShadowGenerator,
+  'markdown-table-generator': MarkdownTableGenerator,
+  'lorem-ipsum-variants': LoremIpsumVariants,
+  'text-to-ascii-art': TextToASCIIArt,
+  'timezone-converter': TimezoneConverter,
+  'credit-card-validator': CreditCardValidator,
 }
 
 // Generate static params for all tools

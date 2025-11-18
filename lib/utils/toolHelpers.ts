@@ -2472,3 +2472,261 @@ export function getASCIITable(): Array<{ dec: number; hex: string; char: string;
 
   return ascii
 }
+
+// Markdown Table Generator
+export function generateMarkdownTable(
+  headers: string[],
+  rows: string[][],
+  alignment: ('left' | 'center' | 'right')[]
+): string {
+  if (headers.length === 0) return ''
+
+  // Generate header row
+  const headerRow = `| ${headers.join(' | ')} |`
+
+  // Generate separator row with alignment
+  const separators = alignment.map(align => {
+    switch (align) {
+      case 'left': return ':---'
+      case 'center': return ':---:'
+      case 'right': return '---:'
+      default: return '---'
+    }
+  })
+  const separatorRow = `| ${separators.join(' | ')} |`
+
+  // Generate data rows
+  const dataRows = rows.map(row => {
+    const paddedRow = [...row]
+    while (paddedRow.length < headers.length) {
+      paddedRow.push('')
+    }
+    return `| ${paddedRow.slice(0, headers.length).join(' | ')} |`
+  })
+
+  return [headerRow, separatorRow, ...dataRows].join('\n')
+}
+
+// Lorem Ipsum Variants
+export const loremIpsumVariants = {
+  classic: [
+    'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+    'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+    'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.',
+    'Nisi ut aliquip ex ea commodo consequat.',
+    'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
+  ],
+  hipster: [
+    'Pabst blue bottle meditation authentic, try-hard kale chips craft beer.',
+    'Sustainable organic artisan, farm-to-table ethical williamsburg.',
+    'Vinyl quinoa biodiesel, polaroid chambray helvetica neutra.',
+    'Distillery fixie messenger bag, scenester post-ironic gastropub.',
+    'Kombucha literally asymmetrical, vegan sriracha pour-over hashtag.',
+  ],
+  bacon: [
+    'Bacon ipsum dolor amet hamburger ribeye kevin pork chop.',
+    'Spare ribs andouille shoulder, bresaola turkey filet mignon.',
+    'Picanha beef ribs prosciutto, capicola pancetta frankfurter.',
+    'Tenderloin salami ground round, ball tip jerky chuck.',
+    'Drumstick sirloin ham hock, kielbasa leberkas venison.',
+  ],
+  pirate: [
+    'Avast ye scurvy dog, shiver me timbers and swab the deck.',
+    'Arr matey, walk the plank ye landlubber.',
+    'Hoist the jolly roger and set sail for treasure.',
+    'Pieces of eight, yo ho ho and a bottle of rum.',
+    'Batten down the hatches, dead men tell no tales.',
+  ],
+  zombie: [
+    'Zombie ipsum reversus ab viral inferno, brains cerebellum.',
+    'Nam malus cerebro, nec undead survival mode.',
+    'De carne lumbering animated corpse, viral voodoo.',
+    'Pestilentia cerebellum brains nec, braaaiiiins qui.',
+    'Sicut mortuis malum horror film, zombie apocalypsis.',
+  ],
+}
+
+export function generateLoremIpsumVariant(variant: keyof typeof loremIpsumVariants, paragraphs: number): string {
+  const sentences = loremIpsumVariants[variant]
+  const result: string[] = []
+
+  for (let i = 0; i < paragraphs; i++) {
+    const paragraph: string[] = []
+    const sentenceCount = Math.floor(Math.random() * 3) + 3 // 3-5 sentences
+
+    for (let j = 0; j < sentenceCount; j++) {
+      paragraph.push(sentences[Math.floor(Math.random() * sentences.length)])
+    }
+
+    result.push(paragraph.join(' '))
+  }
+
+  return result.join('\n\n')
+}
+
+// ASCII Art - Simple banner style
+export function textToASCIIArt(text: string, style: 'standard' | 'slant' | 'banner'): string {
+  const upper = text.toUpperCase()
+
+  if (style === 'standard') {
+    return generateStandardASCII(upper)
+  } else if (style === 'slant') {
+    return generateSlantASCII(upper)
+  } else {
+    return generateBannerASCII(upper)
+  }
+}
+
+function generateStandardASCII(text: string): string {
+  const chars: Record<string, string[]> = {
+    'A': ['  A  ', ' A A ', 'AAAAA', 'A   A', 'A   A'],
+    'B': ['BBBB ', 'B   B', 'BBBB ', 'B   B', 'BBBB '],
+    'C': [' CCC ', 'C   C', 'C    ', 'C   C', ' CCC '],
+    'D': ['DDD  ', 'D  D ', 'D   D', 'D  D ', 'DDD  '],
+    'E': ['EEEEE', 'E    ', 'EEE  ', 'E    ', 'EEEEE'],
+    'F': ['FFFFF', 'F    ', 'FFF  ', 'F    ', 'F    '],
+    'G': [' GGG ', 'G    ', 'G  GG', 'G   G', ' GGG '],
+    'H': ['H   H', 'H   H', 'HHHHH', 'H   H', 'H   H'],
+    'I': ['IIIII', '  I  ', '  I  ', '  I  ', 'IIIII'],
+    'J': ['JJJJJ', '    J', '    J', 'J   J', ' JJJ '],
+    'K': ['K   K', 'K  K ', 'KKK  ', 'K  K ', 'K   K'],
+    'L': ['L    ', 'L    ', 'L    ', 'L    ', 'LLLLL'],
+    'M': ['M   M', 'MM MM', 'M M M', 'M   M', 'M   M'],
+    'N': ['N   N', 'NN  N', 'N N N', 'N  NN', 'N   N'],
+    'O': [' OOO ', 'O   O', 'O   O', 'O   O', ' OOO '],
+    'P': ['PPPP ', 'P   P', 'PPPP ', 'P    ', 'P    '],
+    'Q': [' QQQ ', 'Q   Q', 'Q   Q', 'Q  Q ', ' QQ Q'],
+    'R': ['RRRR ', 'R   R', 'RRRR ', 'R  R ', 'R   R'],
+    'S': [' SSS ', 'S    ', ' SSS ', '    S', 'SSSS '],
+    'T': ['TTTTT', '  T  ', '  T  ', '  T  ', '  T  '],
+    'U': ['U   U', 'U   U', 'U   U', 'U   U', ' UUU '],
+    'V': ['V   V', 'V   V', 'V   V', ' V V ', '  V  '],
+    'W': ['W   W', 'W   W', 'W W W', 'WW WW', 'W   W'],
+    'X': ['X   X', ' X X ', '  X  ', ' X X ', 'X   X'],
+    'Y': ['Y   Y', ' Y Y ', '  Y  ', '  Y  ', '  Y  '],
+    'Z': ['ZZZZZ', '   Z ', '  Z  ', ' Z   ', 'ZZZZZ'],
+    '0': [' 000 ', '0  00', '0 0 0', '00  0', ' 000 '],
+    '1': ['  1  ', ' 11  ', '  1  ', '  1  ', '11111'],
+    '2': [' 222 ', '2   2', '   2 ', '  2  ', '22222'],
+    '3': ['3333 ', '    3', ' 333 ', '    3', '3333 '],
+    '4': ['4   4', '4   4', '44444', '    4', '    4'],
+    '5': ['55555', '5    ', '5555 ', '    5', '5555 '],
+    '6': [' 666 ', '6    ', '6666 ', '6   6', ' 666 '],
+    '7': ['77777', '    7', '   7 ', '  7  ', ' 7   '],
+    '8': [' 888 ', '8   8', ' 888 ', '8   8', ' 888 '],
+    '9': [' 999 ', '9   9', ' 9999', '    9', ' 999 '],
+    ' ': ['     ', '     ', '     ', '     ', '     '],
+  }
+
+  const lines = ['', '', '', '', '']
+  for (let i = 0; i < text.length; i++) {
+    const char = text[i]
+    const charLines = chars[char] || chars[' ']
+    for (let j = 0; j < 5; j++) {
+      lines[j] += charLines[j] + ' '
+    }
+  }
+
+  return lines.join('\n')
+}
+
+function generateSlantASCII(text: string): string {
+  // Simplified slant version
+  return text.split('').map((char, i) => {
+    const spaces = ' '.repeat(i)
+    return `${spaces}/${char}\\`
+  }).join('\n')
+}
+
+function generateBannerASCII(text: string): string {
+  const top = '╔' + '═'.repeat(text.length + 2) + '╗'
+  const mid = '║ ' + text + ' ║'
+  const bot = '╚' + '═'.repeat(text.length + 2) + '╝'
+  return [top, mid, bot].join('\n')
+}
+
+// Timezone Converter
+export function convertTimezone(
+  dateStr: string,
+  fromOffset: number,
+  toOffset: number
+): { date: string; time: string; iso: string } {
+  const date = new Date(dateStr)
+
+  // Adjust for timezone offset difference
+  const offsetDiff = toOffset - fromOffset
+  const convertedDate = new Date(date.getTime() + offsetDiff * 60 * 60 * 1000)
+
+  return {
+    date: convertedDate.toLocaleDateString(),
+    time: convertedDate.toLocaleTimeString(),
+    iso: convertedDate.toISOString(),
+  }
+}
+
+export const timezones = [
+  { name: 'UTC', offset: 0 },
+  { name: 'GMT', offset: 0 },
+  { name: 'EST (New York)', offset: -5 },
+  { name: 'CST (Chicago)', offset: -6 },
+  { name: 'MST (Denver)', offset: -7 },
+  { name: 'PST (Los Angeles)', offset: -8 },
+  { name: 'AKST (Alaska)', offset: -9 },
+  { name: 'HST (Hawaii)', offset: -10 },
+  { name: 'CET (Paris)', offset: 1 },
+  { name: 'EET (Athens)', offset: 2 },
+  { name: 'MSK (Moscow)', offset: 3 },
+  { name: 'GST (Dubai)', offset: 4 },
+  { name: 'IST (India)', offset: 5.5 },
+  { name: 'CST (China)', offset: 8 },
+  { name: 'JST (Tokyo)', offset: 9 },
+  { name: 'AEST (Sydney)', offset: 10 },
+  { name: 'NZST (Auckland)', offset: 12 },
+]
+
+// Credit Card Validator (Luhn Algorithm)
+export function validateCreditCard(cardNumber: string): {
+  valid: boolean
+  type: string
+  formatted: string
+} {
+  // Remove spaces and dashes
+  const cleaned = cardNumber.replace(/[\s-]/g, '')
+
+  // Check if all digits
+  if (!/^\d+$/.test(cleaned)) {
+    return { valid: false, type: 'Invalid', formatted: cardNumber }
+  }
+
+  // Detect card type
+  let type = 'Unknown'
+  if (/^4/.test(cleaned)) type = 'Visa'
+  else if (/^5[1-5]/.test(cleaned)) type = 'Mastercard'
+  else if (/^3[47]/.test(cleaned)) type = 'American Express'
+  else if (/^6(?:011|5)/.test(cleaned)) type = 'Discover'
+
+  // Luhn algorithm
+  let sum = 0
+  let isEven = false
+
+  for (let i = cleaned.length - 1; i >= 0; i--) {
+    let digit = parseInt(cleaned[i])
+
+    if (isEven) {
+      digit *= 2
+      if (digit > 9) {
+        digit -= 9
+      }
+    }
+
+    sum += digit
+    isEven = !isEven
+  }
+
+  const valid = sum % 10 === 0
+
+  // Format card number (4 digits groups)
+  const formatted = cleaned.replace(/(\d{4})/g, '$1 ').trim()
+
+  return { valid, type, formatted }
+}
