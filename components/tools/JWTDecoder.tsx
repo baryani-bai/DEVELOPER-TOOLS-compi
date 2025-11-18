@@ -44,7 +44,7 @@ export default function JWTDecoder() {
     { key: 'k', ctrlKey: true, handler: handleClear, description: 'Clear' },
   ])
 
-  const formatJSON = (obj: any): string => {
+  const formatJSON = (obj: unknown): string => {
     try {
       return JSON.stringify(obj, null, 2)
     } catch {

@@ -4,14 +4,14 @@ import { useState } from 'react'
 import ToolPanel from './ToolPanel'
 import Button from '@/components/ui/Button'
 import KeyboardHint from '@/components/ui/KeyboardHint'
-import { compareJSON } from '@/lib/utils/toolHelpers'
+import { compareJSON, JSONDiffEntry } from '@/lib/utils/toolHelpers'
 import { useToast } from '@/components/ui/Toast'
 import { useKeyboardShortcuts } from '@/lib/hooks/useKeyboardShortcuts'
 
 export default function JSONDiffViewer() {
   const [json1, setJson1] = useState('{\n  "name": "John",\n  "age": 30,\n  "city": "New York"\n}')
   const [json2, setJson2] = useState('{\n  "name": "John",\n  "age": 31,\n  "city": "Boston",\n  "country": "USA"\n}')
-  const [diff, setDiff] = useState<any>(null)
+  const [diff, setDiff] = useState<{ differences: JSONDiffEntry[]; identical: boolean } | null>(null)
   const { showToast } = useToast()
 
   const handleCompare = () => {
@@ -92,7 +92,7 @@ export default function JSONDiffViewer() {
               </div>
 
               <div className="space-y-3">
-                {diff.differences.map((d: any, idx: number) => (
+                {diff.differences.map((d, idx) => (
                   <div
                     key={idx}
                     className={`border p-4 ${

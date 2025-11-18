@@ -706,11 +706,11 @@ export function csvToJSON(csv: string): string {
   }
 
   const headers = lines[0].split(',').map(h => h.trim())
-  const result: any[] = []
+  const result: Record<string, unknown>[] = []
 
   for (let i = 1; i < lines.length; i++) {
     const values = lines[i].split(',').map(v => v.trim())
-    const obj: any = {}
+    const obj: Record<string, unknown> = {}
 
     headers.forEach((header, index) => {
       const value = values[index] || ''
@@ -1576,28 +1576,38 @@ export function hslToRgb(h: number, s: number, l: number): { r: number; g: numbe
 }
 
 // JSON Diff - Compare two JSON objects
+export interface JSONDiffEntry {
+  path: string
+  old: unknown
+  new: unknown
+  type: 'added' | 'removed' | 'changed'
+}
+
 export function compareJSON(json1: string, json2: string): {
-  differences: Array<{ path: string; old: any; new: any; type: 'added' | 'removed' | 'changed' }>
+  differences: JSONDiffEntry[]
   identical: boolean
 } {
   const obj1 = JSON.parse(json1)
   const obj2 = JSON.parse(json2)
 
-  const differences: Array<{ path: string; old: any; new: any; type: 'added' | 'removed' | 'changed' }> = []
+  const differences: JSONDiffEntry[] = []
 
-  function compare(o1: any, o2: any, path: string = '') {
-    const keys1 = o1 ? Object.keys(o1) : []
-    const keys2 = o2 ? Object.keys(o2) : []
+  function compare(o1: unknown, o2: unknown, path: string = '') {
+    const isObject1 = typeof o1 === 'object' && o1 !== null
+    const isObject2 = typeof o2 === 'object' && o2 !== null
+
+    const keys1 = isObject1 ? Object.keys(o1) : []
+    const keys2 = isObject2 ? Object.keys(o2) : []
     const allKeys = new Set([...keys1, ...keys2])
 
     allKeys.forEach(key => {
       const newPath = path ? `${path}.${key}` : key
-      const val1 = o1?.[key]
-      const val2 = o2?.[key]
+      const val1 = isObject1 ? (o1 as Record<string, unknown>)[key] : undefined
+      const val2 = isObject2 ? (o2 as Record<string, unknown>)[key] : undefined
 
-      if (!(key in (o1 || {}))) {
+      if (!isObject1 || !(key in o1)) {
         differences.push({ path: newPath, old: undefined, new: val2, type: 'added' })
-      } else if (!(key in (o2 || {}))) {
+      } else if (!isObject2 || !(key in o2)) {
         differences.push({ path: newPath, old: val1, new: undefined, type: 'removed' })
       } else if (typeof val1 === 'object' && typeof val2 === 'object' && val1 !== null && val2 !== null) {
         compare(val1, val2, newPath)
