@@ -57,6 +57,11 @@ import GitIgnoreGenerator from '@/components/tools/GitIgnoreGenerator'
 import CSSMinifier from '@/components/tools/CSSMinifier'
 import JavaScriptMinifier from '@/components/tools/JavaScriptMinifier'
 import TextStatistics from '@/components/tools/TextStatistics'
+import ROT13Cipher from '@/components/tools/ROT13Cipher'
+import RomanNumeralConverter from '@/components/tools/RomanNumeralConverter'
+import CSSUnitConverter from '@/components/tools/CSSUnitConverter'
+import IPAddressTools from '@/components/tools/IPAddressTools'
+import ColorNameLookup from '@/components/tools/ColorNameLookup'
 
 // Tool component mapper
 const toolComponents: Record<string, React.ComponentType> = {
@@ -115,6 +120,11 @@ const toolComponents: Record<string, React.ComponentType> = {
   'css-minifier': CSSMinifier,
   'javascript-minifier': JavaScriptMinifier,
   'text-statistics': TextStatistics,
+  'rot13-cipher': ROT13Cipher,
+  'roman-numeral-converter': RomanNumeralConverter,
+  'css-unit-converter': CSSUnitConverter,
+  'ip-address-tools': IPAddressTools,
+  'color-name-lookup': ColorNameLookup,
 }
 
 // Generate static params for all tools

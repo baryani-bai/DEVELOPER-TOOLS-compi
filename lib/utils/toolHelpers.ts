@@ -1979,3 +1979,318 @@ export function calculateTextStats(text: string): {
     longestWord,
   }
 }
+
+// ROT13 and Caesar Cipher
+export function rot13(text: string): string {
+  return caesarCipher(text, 13)
+}
+
+export function caesarCipher(text: string, shift: number): string {
+  return text.replace(/[a-zA-Z]/g, (char) => {
+    const start = char <= 'Z' ? 65 : 97
+    return String.fromCharCode(((char.charCodeAt(0) - start + shift) % 26) + start)
+  })
+}
+
+// Roman Numeral Converter
+export function decimalToRoman(num: number): string {
+  if (num < 1 || num > 3999) {
+    throw new Error('Number must be between 1 and 3999')
+  }
+
+  const romanNumerals: [number, string][] = [
+    [1000, 'M'], [900, 'CM'], [500, 'D'], [400, 'CD'],
+    [100, 'C'], [90, 'XC'], [50, 'L'], [40, 'XL'],
+    [10, 'X'], [9, 'IX'], [5, 'V'], [4, 'IV'], [1, 'I']
+  ]
+
+  let result = ''
+  let remaining = num
+
+  for (const [value, numeral] of romanNumerals) {
+    while (remaining >= value) {
+      result += numeral
+      remaining -= value
+    }
+  }
+
+  return result
+}
+
+export function romanToDecimal(roman: string): number {
+  const romanNumerals: Record<string, number> = {
+    I: 1, V: 5, X: 10, L: 50, C: 100, D: 500, M: 1000
+  }
+
+  let result = 0
+  const upperRoman = roman.toUpperCase()
+
+  for (let i = 0; i < upperRoman.length; i++) {
+    const current = romanNumerals[upperRoman[i]]
+    const next = romanNumerals[upperRoman[i + 1]]
+
+    if (!current) {
+      throw new Error(`Invalid Roman numeral character: ${upperRoman[i]}`)
+    }
+
+    if (next && current < next) {
+      result -= current
+    } else {
+      result += current
+    }
+  }
+
+  return result
+}
+
+// CSS Unit Converter
+export function convertCSSUnit(
+  value: number,
+  fromUnit: string,
+  toUnit: string,
+  baseFontSize: number = 16
+): number {
+  // Convert everything to pixels first
+  let pixels: number
+
+  switch (fromUnit) {
+    case 'px':
+      pixels = value
+      break
+    case 'rem':
+      pixels = value * baseFontSize
+      break
+    case 'em':
+      pixels = value * baseFontSize
+      break
+    case 'pt':
+      pixels = value * (4/3) // 1pt = 4/3 px
+      break
+    case 'cm':
+      pixels = value * 37.8 // 1cm = 37.8px
+      break
+    case 'mm':
+      pixels = value * 3.78 // 1mm = 3.78px
+      break
+    case 'in':
+      pixels = value * 96 // 1in = 96px
+      break
+    default:
+      throw new Error('Unsupported source unit')
+  }
+
+  // Convert from pixels to target unit
+  switch (toUnit) {
+    case 'px':
+      return pixels
+    case 'rem':
+      return pixels / baseFontSize
+    case 'em':
+      return pixels / baseFontSize
+    case 'pt':
+      return pixels / (4/3)
+    case 'cm':
+      return pixels / 37.8
+    case 'mm':
+      return pixels / 3.78
+    case 'in':
+      return pixels / 96
+    default:
+      throw new Error('Unsupported target unit')
+  }
+}
+
+// IP Address Tools
+export function ipv4ToDecimal(ip: string): number {
+  const octets = ip.split('.').map(Number)
+  if (octets.length !== 4 || octets.some(n => n < 0 || n > 255 || isNaN(n))) {
+    throw new Error('Invalid IPv4 address')
+  }
+  return (octets[0] << 24) + (octets[1] << 16) + (octets[2] << 8) + octets[3]
+}
+
+export function decimalToIpv4(decimal: number): string {
+  if (decimal < 0 || decimal > 4294967295) {
+    throw new Error('Decimal must be between 0 and 4294967295')
+  }
+  return [
+    (decimal >>> 24) & 255,
+    (decimal >>> 16) & 255,
+    (decimal >>> 8) & 255,
+    decimal & 255
+  ].join('.')
+}
+
+export function ipv4ToBinary(ip: string): string {
+  const octets = ip.split('.').map(Number)
+  if (octets.length !== 4 || octets.some(n => n < 0 || n > 255 || isNaN(n))) {
+    throw new Error('Invalid IPv4 address')
+  }
+  return octets.map(n => n.toString(2).padStart(8, '0')).join('.')
+}
+
+export function ipv4ToHex(ip: string): string {
+  const decimal = ipv4ToDecimal(ip)
+  return '0x' + decimal.toString(16).toUpperCase().padStart(8, '0')
+}
+
+// Color Name Database (CSS named colors)
+export const cssColorNames: Record<string, string> = {
+  aliceblue: '#F0F8FF',
+  antiquewhite: '#FAEBD7',
+  aqua: '#00FFFF',
+  aquamarine: '#7FFFD4',
+  azure: '#F0FFFF',
+  beige: '#F5F5DC',
+  bisque: '#FFE4C4',
+  black: '#000000',
+  blanchedalmond: '#FFEBCD',
+  blue: '#0000FF',
+  blueviolet: '#8A2BE2',
+  brown: '#A52A2A',
+  burlywood: '#DEB887',
+  cadetblue: '#5F9EA0',
+  chartreuse: '#7FFF00',
+  chocolate: '#D2691E',
+  coral: '#FF7F50',
+  cornflowerblue: '#6495ED',
+  cornsilk: '#FFF8DC',
+  crimson: '#DC143C',
+  cyan: '#00FFFF',
+  darkblue: '#00008B',
+  darkcyan: '#008B8B',
+  darkgoldenrod: '#B8860B',
+  darkgray: '#A9A9A9',
+  darkgreen: '#006400',
+  darkkhaki: '#BDB76B',
+  darkmagenta: '#8B008B',
+  darkolivegreen: '#556B2F',
+  darkorange: '#FF8C00',
+  darkorchid: '#9932CC',
+  darkred: '#8B0000',
+  darksalmon: '#E9967A',
+  darkseagreen: '#8FBC8F',
+  darkslateblue: '#483D8B',
+  darkslategray: '#2F4F4F',
+  darkturquoise: '#00CED1',
+  darkviolet: '#9400D3',
+  deeppink: '#FF1493',
+  deepskyblue: '#00BFFF',
+  dimgray: '#696969',
+  dodgerblue: '#1E90FF',
+  firebrick: '#B22222',
+  floralwhite: '#FFFAF0',
+  forestgreen: '#228B22',
+  fuchsia: '#FF00FF',
+  gainsboro: '#DCDCDC',
+  ghostwhite: '#F8F8FF',
+  gold: '#FFD700',
+  goldenrod: '#DAA520',
+  gray: '#808080',
+  green: '#008000',
+  greenyellow: '#ADFF2F',
+  honeydew: '#F0FFF0',
+  hotpink: '#FF69B4',
+  indianred: '#CD5C5C',
+  indigo: '#4B0082',
+  ivory: '#FFFFF0',
+  khaki: '#F0E68C',
+  lavender: '#E6E6FA',
+  lavenderblush: '#FFF0F5',
+  lawngreen: '#7CFC00',
+  lemonchiffon: '#FFFACD',
+  lightblue: '#ADD8E6',
+  lightcoral: '#F08080',
+  lightcyan: '#E0FFFF',
+  lightgoldenrodyellow: '#FAFAD2',
+  lightgray: '#D3D3D3',
+  lightgreen: '#90EE90',
+  lightpink: '#FFB6C1',
+  lightsalmon: '#FFA07A',
+  lightseagreen: '#20B2AA',
+  lightskyblue: '#87CEFA',
+  lightslategray: '#778899',
+  lightsteelblue: '#B0C4DE',
+  lightyellow: '#FFFFE0',
+  lime: '#00FF00',
+  limegreen: '#32CD32',
+  linen: '#FAF0E6',
+  magenta: '#FF00FF',
+  maroon: '#800000',
+  mediumaquamarine: '#66CDAA',
+  mediumblue: '#0000CD',
+  mediumorchid: '#BA55D3',
+  mediumpurple: '#9370DB',
+  mediumseagreen: '#3CB371',
+  mediumslateblue: '#7B68EE',
+  mediumspringgreen: '#00FA9A',
+  mediumturquoise: '#48D1CC',
+  mediumvioletred: '#C71585',
+  midnightblue: '#191970',
+  mintcream: '#F5FFFA',
+  mistyrose: '#FFE4E1',
+  moccasin: '#FFE4B5',
+  navajowhite: '#FFDEAD',
+  navy: '#000080',
+  oldlace: '#FDF5E6',
+  olive: '#808000',
+  olivedrab: '#6B8E23',
+  orange: '#FFA500',
+  orangered: '#FF4500',
+  orchid: '#DA70D6',
+  palegoldenrod: '#EEE8AA',
+  palegreen: '#98FB98',
+  paleturquoise: '#AFEEEE',
+  palevioletred: '#DB7093',
+  papayawhip: '#FFEFD5',
+  peachpuff: '#FFDAB9',
+  peru: '#CD853F',
+  pink: '#FFC0CB',
+  plum: '#DDA0DD',
+  powderblue: '#B0E0E6',
+  purple: '#800080',
+  rebeccapurple: '#663399',
+  red: '#FF0000',
+  rosybrown: '#BC8F8F',
+  royalblue: '#4169E1',
+  saddlebrown: '#8B4513',
+  salmon: '#FA8072',
+  sandybrown: '#F4A460',
+  seagreen: '#2E8B57',
+  seashell: '#FFF5EE',
+  sienna: '#A0522D',
+  silver: '#C0C0C0',
+  skyblue: '#87CEEB',
+  slateblue: '#6A5ACD',
+  slategray: '#708090',
+  snow: '#FFFAFA',
+  springgreen: '#00FF7F',
+  steelblue: '#4682B4',
+  tan: '#D2B48C',
+  teal: '#008080',
+  thistle: '#D8BFD8',
+  tomato: '#FF6347',
+  turquoise: '#40E0D0',
+  violet: '#EE82EE',
+  wheat: '#F5DEB3',
+  white: '#FFFFFF',
+  whitesmoke: '#F5F5F5',
+  yellow: '#FFFF00',
+  yellowgreen: '#9ACD32',
+}
+
+export function searchColorNames(query: string): Array<{ name: string; hex: string }> {
+  const lowerQuery = query.toLowerCase()
+  return Object.entries(cssColorNames)
+    .filter(([name]) => name.includes(lowerQuery))
+    .map(([name, hex]) => ({ name, hex }))
+    .slice(0, 20) // Limit to 20 results
+}
+
+export function colorNameToHex(name: string): string {
+  const hex = cssColorNames[name.toLowerCase()]
+  if (!hex) {
+    throw new Error('Color name not found')
+  }
+  return hex
+}
