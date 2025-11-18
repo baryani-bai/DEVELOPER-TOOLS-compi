@@ -2,6 +2,8 @@
  * Utility functions for tools
  */
 
+import DOMPurify from 'dompurify'
+
 // Generate hash using Web Crypto API
 export async function generateHash(
   text: string,
@@ -273,7 +275,7 @@ export function minifyCSS(css: string): string {
     .trim()
 }
 
-// Simple Markdown to HTML converter
+// Simple Markdown to HTML converter with XSS protection
 export function markdownToHTML(markdown: string): string {
   let html = markdown
     // Headers
@@ -293,7 +295,12 @@ export function markdownToHTML(markdown: string): string {
     // Line breaks
     .replace(/\n$/gim, '<br />')
 
-  return html
+  // Sanitize HTML to prevent XSS attacks
+  return DOMPurify.sanitize(html, {
+    ALLOWED_TAGS: ['h1', 'h2', 'h3', 'strong', 'em', 'code', 'a', 'br', 'p', 'ul', 'ol', 'li'],
+    ALLOWED_ATTR: ['href'],
+    ALLOW_DATA_ATTR: false,
+  })
 }
 
 // Color conversions
