@@ -2294,3 +2294,181 @@ export function colorNameToHex(name: string): string {
   }
   return hex
 }
+
+// HTTP Status Codes Database
+export const httpStatusCodes: Record<number, { message: string; description: string; category: string }> = {
+  // 1xx: Informational
+  100: { message: 'Continue', description: 'The initial part of a request has been received and has not yet been rejected by the server.', category: 'Informational' },
+  101: { message: 'Switching Protocols', description: 'The server understands and is willing to comply with the client\'s request to switch protocols.', category: 'Informational' },
+  102: { message: 'Processing', description: 'The server has received and is processing the request, but no response is available yet.', category: 'Informational' },
+  103: { message: 'Early Hints', description: 'Used to return some response headers before final HTTP message.', category: 'Informational' },
+
+  // 2xx: Success
+  200: { message: 'OK', description: 'The request succeeded. The meaning depends on the HTTP method.', category: 'Success' },
+  201: { message: 'Created', description: 'The request succeeded, and a new resource was created as a result.', category: 'Success' },
+  202: { message: 'Accepted', description: 'The request has been accepted for processing, but processing has not been completed.', category: 'Success' },
+  203: { message: 'Non-Authoritative Information', description: 'The request was successful but the enclosed payload has been modified.', category: 'Success' },
+  204: { message: 'No Content', description: 'The server successfully processed the request, but is not returning any content.', category: 'Success' },
+  205: { message: 'Reset Content', description: 'The server successfully processed the request, asks that the requester reset its document view.', category: 'Success' },
+  206: { message: 'Partial Content', description: 'The server is delivering only part of the resource due to a range header sent by the client.', category: 'Success' },
+
+  // 3xx: Redirection
+  300: { message: 'Multiple Choices', description: 'The request has more than one possible response. The user agent should choose one.', category: 'Redirection' },
+  301: { message: 'Moved Permanently', description: 'The URL of the requested resource has been changed permanently.', category: 'Redirection' },
+  302: { message: 'Found', description: 'The URI of requested resource has been changed temporarily.', category: 'Redirection' },
+  303: { message: 'See Other', description: 'The server sent this response to direct the client to get the requested resource at another URI with a GET request.', category: 'Redirection' },
+  304: { message: 'Not Modified', description: 'Indicates that the resource has not been modified since the version specified by the request headers.', category: 'Redirection' },
+  307: { message: 'Temporary Redirect', description: 'The server sends this response to direct the client to get the requested resource at another URI with the same method.', category: 'Redirection' },
+  308: { message: 'Permanent Redirect', description: 'The resource is now permanently located at another URI.', category: 'Redirection' },
+
+  // 4xx: Client Errors
+  400: { message: 'Bad Request', description: 'The server cannot or will not process the request due to client error.', category: 'Client Error' },
+  401: { message: 'Unauthorized', description: 'The client must authenticate itself to get the requested response.', category: 'Client Error' },
+  402: { message: 'Payment Required', description: 'Reserved for future use. Originally intended for digital payment systems.', category: 'Client Error' },
+  403: { message: 'Forbidden', description: 'The client does not have access rights to the content.', category: 'Client Error' },
+  404: { message: 'Not Found', description: 'The server cannot find the requested resource.', category: 'Client Error' },
+  405: { message: 'Method Not Allowed', description: 'The request method is known by the server but is not supported by the target resource.', category: 'Client Error' },
+  406: { message: 'Not Acceptable', description: 'The server cannot produce a response matching the list of acceptable values.', category: 'Client Error' },
+  407: { message: 'Proxy Authentication Required', description: 'The client must first authenticate itself with the proxy.', category: 'Client Error' },
+  408: { message: 'Request Timeout', description: 'The server would like to shut down this unused connection.', category: 'Client Error' },
+  409: { message: 'Conflict', description: 'The request conflicts with the current state of the server.', category: 'Client Error' },
+  410: { message: 'Gone', description: 'The requested content has been permanently deleted from server.', category: 'Client Error' },
+  411: { message: 'Length Required', description: 'Server rejected the request because the Content-Length header field is not defined.', category: 'Client Error' },
+  412: { message: 'Precondition Failed', description: 'The client has indicated preconditions that the server does not meet.', category: 'Client Error' },
+  413: { message: 'Payload Too Large', description: 'Request entity is larger than limits defined by server.', category: 'Client Error' },
+  414: { message: 'URI Too Long', description: 'The URI requested by the client is longer than the server is willing to interpret.', category: 'Client Error' },
+  415: { message: 'Unsupported Media Type', description: 'The media format of the requested data is not supported by the server.', category: 'Client Error' },
+  416: { message: 'Range Not Satisfiable', description: 'The range specified by the Range header field cannot be fulfilled.', category: 'Client Error' },
+  417: { message: 'Expectation Failed', description: 'The expectation given in the Expect request header field cannot be met by the server.', category: 'Client Error' },
+  418: { message: 'I\'m a teapot', description: 'The server refuses the attempt to brew coffee with a teapot (April Fools\' joke).', category: 'Client Error' },
+  422: { message: 'Unprocessable Entity', description: 'The request was well-formed but was unable to be followed due to semantic errors.', category: 'Client Error' },
+  425: { message: 'Too Early', description: 'The server is unwilling to risk processing a request that might be replayed.', category: 'Client Error' },
+  426: { message: 'Upgrade Required', description: 'The server refuses to perform the request using the current protocol.', category: 'Client Error' },
+  428: { message: 'Precondition Required', description: 'The origin server requires the request to be conditional.', category: 'Client Error' },
+  429: { message: 'Too Many Requests', description: 'The user has sent too many requests in a given amount of time.', category: 'Client Error' },
+  431: { message: 'Request Header Fields Too Large', description: 'The server is unwilling to process the request because its header fields are too large.', category: 'Client Error' },
+  451: { message: 'Unavailable For Legal Reasons', description: 'The user requested a resource that is not available due to legal reasons.', category: 'Client Error' },
+
+  // 5xx: Server Errors
+  500: { message: 'Internal Server Error', description: 'The server has encountered a situation it does not know how to handle.', category: 'Server Error' },
+  501: { message: 'Not Implemented', description: 'The request method is not supported by the server and cannot be handled.', category: 'Server Error' },
+  502: { message: 'Bad Gateway', description: 'The server, while acting as a gateway, received an invalid response.', category: 'Server Error' },
+  503: { message: 'Service Unavailable', description: 'The server is not ready to handle the request.', category: 'Server Error' },
+  504: { message: 'Gateway Timeout', description: 'The server is acting as a gateway and cannot get a response in time.', category: 'Server Error' },
+  505: { message: 'HTTP Version Not Supported', description: 'The HTTP version used in the request is not supported by the server.', category: 'Server Error' },
+  506: { message: 'Variant Also Negotiates', description: 'The server has an internal configuration error.', category: 'Server Error' },
+  507: { message: 'Insufficient Storage', description: 'The server is unable to store the representation needed to complete the request.', category: 'Server Error' },
+  508: { message: 'Loop Detected', description: 'The server detected an infinite loop while processing the request.', category: 'Server Error' },
+  510: { message: 'Not Extended', description: 'Further extensions to the request are required for the server to fulfill it.', category: 'Server Error' },
+  511: { message: 'Network Authentication Required', description: 'The client needs to authenticate to gain network access.', category: 'Server Error' },
+}
+
+export function searchHTTPStatusCodes(query: string): Array<{ code: number; message: string; description: string; category: string }> {
+  const lowerQuery = query.toLowerCase()
+  return Object.entries(httpStatusCodes)
+    .filter(([code, data]) =>
+      code.includes(query) ||
+      data.message.toLowerCase().includes(lowerQuery) ||
+      data.description.toLowerCase().includes(lowerQuery)
+    )
+    .map(([code, data]) => ({ code: parseInt(code), ...data }))
+}
+
+// MIME Types Database (common ones)
+export const mimeTypes: Record<string, { type: string; extensions: string[] }> = {
+  // Text
+  'text/plain': { type: 'Plain Text', extensions: ['txt'] },
+  'text/html': { type: 'HTML', extensions: ['html', 'htm'] },
+  'text/css': { type: 'CSS', extensions: ['css'] },
+  'text/javascript': { type: 'JavaScript', extensions: ['js', 'mjs'] },
+  'text/csv': { type: 'CSV', extensions: ['csv'] },
+  'text/xml': { type: 'XML', extensions: ['xml'] },
+
+  // Application
+  'application/json': { type: 'JSON', extensions: ['json'] },
+  'application/pdf': { type: 'PDF', extensions: ['pdf'] },
+  'application/zip': { type: 'ZIP Archive', extensions: ['zip'] },
+  'application/x-tar': { type: 'TAR Archive', extensions: ['tar'] },
+  'application/gzip': { type: 'GZIP', extensions: ['gz'] },
+  'application/x-7z-compressed': { type: '7-Zip Archive', extensions: ['7z'] },
+  'application/x-rar-compressed': { type: 'RAR Archive', extensions: ['rar'] },
+  'application/msword': { type: 'Microsoft Word', extensions: ['doc'] },
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': { type: 'Microsoft Word (OpenXML)', extensions: ['docx'] },
+  'application/vnd.ms-excel': { type: 'Microsoft Excel', extensions: ['xls'] },
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': { type: 'Microsoft Excel (OpenXML)', extensions: ['xlsx'] },
+  'application/vnd.ms-powerpoint': { type: 'Microsoft PowerPoint', extensions: ['ppt'] },
+  'application/vnd.openxmlformats-officedocument.presentationml.presentation': { type: 'Microsoft PowerPoint (OpenXML)', extensions: ['pptx'] },
+
+  // Images
+  'image/jpeg': { type: 'JPEG Image', extensions: ['jpg', 'jpeg'] },
+  'image/png': { type: 'PNG Image', extensions: ['png'] },
+  'image/gif': { type: 'GIF Image', extensions: ['gif'] },
+  'image/webp': { type: 'WebP Image', extensions: ['webp'] },
+  'image/svg+xml': { type: 'SVG Image', extensions: ['svg'] },
+  'image/bmp': { type: 'BMP Image', extensions: ['bmp'] },
+  'image/x-icon': { type: 'Icon', extensions: ['ico'] },
+
+  // Audio
+  'audio/mpeg': { type: 'MP3 Audio', extensions: ['mp3'] },
+  'audio/wav': { type: 'WAV Audio', extensions: ['wav'] },
+  'audio/ogg': { type: 'OGG Audio', extensions: ['ogg'] },
+  'audio/webm': { type: 'WebM Audio', extensions: ['weba'] },
+
+  // Video
+  'video/mp4': { type: 'MP4 Video', extensions: ['mp4'] },
+  'video/mpeg': { type: 'MPEG Video', extensions: ['mpeg'] },
+  'video/webm': { type: 'WebM Video', extensions: ['webm'] },
+  'video/ogg': { type: 'OGG Video', extensions: ['ogv'] },
+  'video/x-msvideo': { type: 'AVI Video', extensions: ['avi'] },
+
+  // Fonts
+  'font/woff': { type: 'WOFF Font', extensions: ['woff'] },
+  'font/woff2': { type: 'WOFF2 Font', extensions: ['woff2'] },
+  'font/ttf': { type: 'TrueType Font', extensions: ['ttf'] },
+  'font/otf': { type: 'OpenType Font', extensions: ['otf'] },
+}
+
+export function searchMimeTypes(query: string): Array<{ mime: string; type: string; extensions: string[] }> {
+  const lowerQuery = query.toLowerCase()
+  return Object.entries(mimeTypes)
+    .filter(([mime, data]) =>
+      mime.toLowerCase().includes(lowerQuery) ||
+      data.type.toLowerCase().includes(lowerQuery) ||
+      data.extensions.some(ext => ext.includes(lowerQuery))
+    )
+    .map(([mime, data]) => ({ mime, ...data }))
+    .slice(0, 20)
+}
+
+export function getMimeByExtension(extension: string): string | null {
+  const ext = extension.toLowerCase().replace('.', '')
+  for (const [mime, data] of Object.entries(mimeTypes)) {
+    if (data.extensions.includes(ext)) {
+      return mime
+    }
+  }
+  return null
+}
+
+// ASCII Table Data
+export function getASCIITable(): Array<{ dec: number; hex: string; char: string; description: string }> {
+  const ascii = []
+  const descriptions: Record<number, string> = {
+    0: 'NULL', 1: 'SOH', 2: 'STX', 3: 'ETX', 4: 'EOT', 5: 'ENQ', 6: 'ACK', 7: 'BEL',
+    8: 'BS', 9: 'TAB', 10: 'LF', 11: 'VT', 12: 'FF', 13: 'CR', 14: 'SO', 15: 'SI',
+    16: 'DLE', 17: 'DC1', 18: 'DC2', 19: 'DC3', 20: 'DC4', 21: 'NAK', 22: 'SYN', 23: 'ETB',
+    24: 'CAN', 25: 'EM', 26: 'SUB', 27: 'ESC', 28: 'FS', 29: 'GS', 30: 'RS', 31: 'US',
+    32: 'Space', 127: 'DEL'
+  }
+
+  for (let i = 0; i <= 127; i++) {
+    ascii.push({
+      dec: i,
+      hex: '0x' + i.toString(16).toUpperCase().padStart(2, '0'),
+      char: i >= 33 && i <= 126 ? String.fromCharCode(i) : '',
+      description: descriptions[i] || (i >= 33 && i <= 126 ? String.fromCharCode(i) : '')
+    })
+  }
+
+  return ascii
+}

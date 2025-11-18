@@ -62,6 +62,11 @@ import RomanNumeralConverter from '@/components/tools/RomanNumeralConverter'
 import CSSUnitConverter from '@/components/tools/CSSUnitConverter'
 import IPAddressTools from '@/components/tools/IPAddressTools'
 import ColorNameLookup from '@/components/tools/ColorNameLookup'
+import HTTPStatusCodeLookup from '@/components/tools/HTTPStatusCodeLookup'
+import MIMETypeLookup from '@/components/tools/MIMETypeLookup'
+import ASCIITableReference from '@/components/tools/ASCIITableReference'
+import CSSGradientGenerator from '@/components/tools/CSSGradientGenerator'
+import CSSBoxShadowGenerator from '@/components/tools/CSSBoxShadowGenerator'
 
 // Tool component mapper
 const toolComponents: Record<string, React.ComponentType> = {
@@ -125,6 +130,11 @@ const toolComponents: Record<string, React.ComponentType> = {
   'css-unit-converter': CSSUnitConverter,
   'ip-address-tools': IPAddressTools,
   'color-name-lookup': ColorNameLookup,
+  'http-status-code-lookup': HTTPStatusCodeLookup,
+  'mime-type-lookup': MIMETypeLookup,
+  'ascii-table-reference': ASCIITableReference,
+  'css-gradient-generator': CSSGradientGenerator,
+  'css-box-shadow-generator': CSSBoxShadowGenerator,
 }
 
 // Generate static params for all tools
