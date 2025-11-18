@@ -52,6 +52,11 @@ import TemplateFormatter from '@/components/tools/TemplateFormatter'
 import FileSizeConverter from '@/components/tools/FileSizeConverter'
 import UnixPermissionsCalculator from '@/components/tools/UnixPermissionsCalculator'
 import EmailURLValidator from '@/components/tools/EmailURLValidator'
+import UserAgentParser from '@/components/tools/UserAgentParser'
+import GitIgnoreGenerator from '@/components/tools/GitIgnoreGenerator'
+import CSSMinifier from '@/components/tools/CSSMinifier'
+import JavaScriptMinifier from '@/components/tools/JavaScriptMinifier'
+import TextStatistics from '@/components/tools/TextStatistics'
 
 // Tool component mapper
 const toolComponents: Record<string, React.ComponentType> = {
@@ -105,6 +110,11 @@ const toolComponents: Record<string, React.ComponentType> = {
   'file-size-converter': FileSizeConverter,
   'unix-permissions': UnixPermissionsCalculator,
   'email-url-validator': EmailURLValidator,
+  'user-agent-parser': UserAgentParser,
+  'gitignore-generator': GitIgnoreGenerator,
+  'css-minifier': CSSMinifier,
+  'javascript-minifier': JavaScriptMinifier,
+  'text-statistics': TextStatistics,
 }
 
 // Generate static params for all tools

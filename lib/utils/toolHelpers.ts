@@ -1752,3 +1752,230 @@ export function validateURL(url: string): { valid: boolean; error?: string } {
     return { valid: false, error: 'Invalid URL format' }
   }
 }
+
+// User Agent Parser
+export function parseUserAgent(ua: string): {
+  browser: { name: string; version: string }
+  os: { name: string; version: string }
+  device: string
+  raw: string
+} {
+  const result = {
+    browser: { name: 'Unknown', version: '' },
+    os: { name: 'Unknown', version: '' },
+    device: 'Desktop',
+    raw: ua
+  }
+
+  // Browser detection
+  if (ua.includes('Chrome') && !ua.includes('Edg')) {
+    result.browser.name = 'Chrome'
+    const match = ua.match(/Chrome\/(\d+\.\d+)/)
+    result.browser.version = match ? match[1] : ''
+  } else if (ua.includes('Firefox')) {
+    result.browser.name = 'Firefox'
+    const match = ua.match(/Firefox\/(\d+\.\d+)/)
+    result.browser.version = match ? match[1] : ''
+  } else if (ua.includes('Safari') && !ua.includes('Chrome')) {
+    result.browser.name = 'Safari'
+    const match = ua.match(/Version\/(\d+\.\d+)/)
+    result.browser.version = match ? match[1] : ''
+  } else if (ua.includes('Edg')) {
+    result.browser.name = 'Edge'
+    const match = ua.match(/Edg\/(\d+\.\d+)/)
+    result.browser.version = match ? match[1] : ''
+  } else if (ua.includes('MSIE') || ua.includes('Trident')) {
+    result.browser.name = 'Internet Explorer'
+    const match = ua.match(/(?:MSIE |rv:)(\d+\.\d+)/)
+    result.browser.version = match ? match[1] : ''
+  }
+
+  // OS detection
+  if (ua.includes('Windows NT')) {
+    result.os.name = 'Windows'
+    const match = ua.match(/Windows NT (\d+\.\d+)/)
+    if (match) {
+      const version = match[1]
+      if (version === '10.0') result.os.version = '10/11'
+      else if (version === '6.3') result.os.version = '8.1'
+      else if (version === '6.2') result.os.version = '8'
+      else if (version === '6.1') result.os.version = '7'
+      else result.os.version = version
+    }
+  } else if (ua.includes('Mac OS X')) {
+    result.os.name = 'macOS'
+    const match = ua.match(/Mac OS X (\d+[._]\d+[._]?\d*)/)
+    result.os.version = match ? match[1].replace(/_/g, '.') : ''
+  } else if (ua.includes('Linux')) {
+    result.os.name = 'Linux'
+  } else if (ua.includes('Android')) {
+    result.os.name = 'Android'
+    const match = ua.match(/Android (\d+\.\d+)/)
+    result.os.version = match ? match[1] : ''
+  } else if (ua.includes('iOS') || ua.includes('iPhone') || ua.includes('iPad')) {
+    result.os.name = 'iOS'
+    const match = ua.match(/OS (\d+_\d+)/)
+    result.os.version = match ? match[1].replace(/_/g, '.') : ''
+  }
+
+  // Device detection
+  if (ua.includes('Mobile') || ua.includes('Android')) {
+    result.device = 'Mobile'
+  } else if (ua.includes('Tablet') || ua.includes('iPad')) {
+    result.device = 'Tablet'
+  }
+
+  return result
+}
+
+// Git Ignore Generator - Templates for different languages/frameworks
+export const gitIgnoreTemplates: Record<string, string> = {
+  'node': `# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+.npm
+.yarn
+dist/
+build/
+.env
+.env.local
+.env.*.local`,
+  'python': `# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+pip-log.txt
+pip-delete-this-directory.txt
+*.egg-info/
+dist/
+build/
+.pytest_cache/`,
+  'java': `# Java
+*.class
+*.jar
+*.war
+*.ear
+target/
+.gradle/
+build/
+.idea/
+*.iml
+*.ipr
+*.iws`,
+  'react': `# React
+node_modules/
+build/
+dist/
+.env
+.env.local
+.env.production.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.DS_Store
+coverage/`,
+  'nextjs': `# Next.js
+.next/
+out/
+node_modules/
+.env*.local
+.vercel
+*.tsbuildinfo
+next-env.d.ts`,
+  'macos': `# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns`,
+  'windows': `# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk`,
+  'vscode': `# VS Code
+.vscode/
+.history/
+*.code-workspace`,
+}
+
+export function generateGitIgnore(templates: string[]): string {
+  return templates
+    .map(template => gitIgnoreTemplates[template] || '')
+    .filter(Boolean)
+    .join('\n\n')
+}
+
+// Note: minifyCSS and minifyJavaScript functions already exist at lines 265 and 467
+
+// Text Statistics Calculator
+export function calculateTextStats(text: string): {
+  characters: number
+  charactersNoSpaces: number
+  words: number
+  sentences: number
+  paragraphs: number
+  readingTime: number
+  speakingTime: number
+  averageWordLength: number
+  longestWord: string
+} {
+  const characters = text.length
+  const charactersNoSpaces = text.replace(/\s/g, '').length
+
+  // Words
+  const words = text.trim().split(/\s+/).filter(w => w.length > 0)
+  const wordCount = words.length
+
+  // Sentences (approximate)
+  const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0).length
+
+  // Paragraphs
+  const paragraphs = text.split(/\n\s*\n/).filter(p => p.trim().length > 0).length
+
+  // Reading time (average 200 words per minute)
+  const readingTime = Math.ceil(wordCount / 200)
+
+  // Speaking time (average 130 words per minute)
+  const speakingTime = Math.ceil(wordCount / 130)
+
+  // Average word length
+  const totalChars = words.reduce((sum, word) => sum + word.length, 0)
+  const averageWordLength = wordCount > 0 ? Math.round((totalChars / wordCount) * 10) / 10 : 0
+
+  // Longest word
+  const longestWord = words.reduce((longest, word) =>
+    word.length > longest.length ? word : longest, '')
+
+  return {
+    characters,
+    charactersNoSpaces,
+    words: wordCount,
+    sentences,
+    paragraphs,
+    readingTime,
+    speakingTime,
+    averageWordLength,
+    longestWord,
+  }
+}
