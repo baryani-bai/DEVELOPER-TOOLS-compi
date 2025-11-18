@@ -2730,3 +2730,215 @@ export function validateCreditCard(cardNumber: string): {
 
   return { valid, type, formatted }
 }
+
+// JSON Schema Validator - Basic implementation
+export function validateJSONSchema(data: string, schema: string): {
+  valid: boolean
+  errors: string[]
+} {
+  try {
+    const jsonData = JSON.parse(data)
+    const jsonSchema = JSON.parse(schema)
+
+    const errors: string[] = []
+
+    // Basic schema validation (simplified)
+    function validate(data: any, schema: any, path: string = 'root'): void {
+      // Check type
+      if (schema.type) {
+        const actualType = Array.isArray(data) ? 'array' : typeof data
+        if (actualType !== schema.type && !(schema.type === 'integer' && typeof data === 'number')) {
+          errors.push(`${path}: Expected type ${schema.type}, got ${actualType}`)
+        }
+      }
+
+      // Check required fields
+      if (schema.required && typeof data === 'object' && !Array.isArray(data)) {
+        for (const field of schema.required) {
+          if (!(field in data)) {
+            errors.push(`${path}: Missing required field '${field}'`)
+          }
+        }
+      }
+
+      // Check properties
+      if (schema.properties && typeof data === 'object' && !Array.isArray(data)) {
+        for (const [key, propSchema] of Object.entries(schema.properties)) {
+          if (key in data) {
+            validate(data[key], propSchema, `${path}.${key}`)
+          }
+        }
+      }
+
+      // Check array items
+      if (schema.items && Array.isArray(data)) {
+        data.forEach((item, index) => {
+          validate(item, schema.items, `${path}[${index}]`)
+        })
+      }
+
+      // Check minLength/maxLength for strings
+      if (typeof data === 'string') {
+        if (schema.minLength && data.length < schema.minLength) {
+          errors.push(`${path}: String length ${data.length} is less than minimum ${schema.minLength}`)
+        }
+        if (schema.maxLength && data.length > schema.maxLength) {
+          errors.push(`${path}: String length ${data.length} exceeds maximum ${schema.maxLength}`)
+        }
+      }
+
+      // Check minimum/maximum for numbers
+      if (typeof data === 'number') {
+        if (schema.minimum !== undefined && data < schema.minimum) {
+          errors.push(`${path}: Value ${data} is less than minimum ${schema.minimum}`)
+        }
+        if (schema.maximum !== undefined && data > schema.maximum) {
+          errors.push(`${path}: Value ${data} exceeds maximum ${schema.maximum}`)
+        }
+      }
+
+      // Check enum
+      if (schema.enum && !schema.enum.includes(data)) {
+        errors.push(`${path}: Value must be one of [${schema.enum.join(', ')}]`)
+      }
+    }
+
+    validate(jsonData, jsonSchema)
+
+    return {
+      valid: errors.length === 0,
+      errors,
+    }
+  } catch (err) {
+    return {
+      valid: false,
+      errors: [err instanceof Error ? err.message : 'Invalid JSON format'],
+    }
+  }
+}
+
+// Example JSON schemas
+export const exampleSchemas = {
+  user: {
+    type: 'object',
+    required: ['name', 'email'],
+    properties: {
+      name: { type: 'string', minLength: 1 },
+      email: { type: 'string' },
+      age: { type: 'number', minimum: 0, maximum: 150 },
+      role: { type: 'string', enum: ['admin', 'user', 'guest'] },
+    },
+  },
+  product: {
+    type: 'object',
+    required: ['id', 'name', 'price'],
+    properties: {
+      id: { type: 'number' },
+      name: { type: 'string', minLength: 1 },
+      price: { type: 'number', minimum: 0 },
+      tags: { type: 'array', items: { type: 'string' } },
+    },
+  },
+  config: {
+    type: 'object',
+    required: ['version', 'settings'],
+    properties: {
+      version: { type: 'string' },
+      settings: {
+        type: 'object',
+        properties: {
+          debug: { type: 'boolean' },
+          maxRetries: { type: 'number', minimum: 0, maximum: 10 },
+        },
+      },
+    },
+  },
+}
+
+// Semantic Version Checker
+export interface SemanticVersion {
+  major: number
+  minor: number
+  patch: number
+  prerelease?: string
+  build?: string
+}
+
+export function parseSemanticVersion(version: string): SemanticVersion | null {
+  // Support format: major.minor.patch[-prerelease][+build]
+  const regex = /^(\d+)\.(\d+)\.(\d+)(?:-([0-9A-Za-z-.]+))?(?:\+([0-9A-Za-z-.]+))?$/
+  const match = version.match(regex)
+
+  if (!match) {
+    return null
+  }
+
+  return {
+    major: parseInt(match[1]),
+    minor: parseInt(match[2]),
+    patch: parseInt(match[3]),
+    prerelease: match[4],
+    build: match[5],
+  }
+}
+
+export function compareSemanticVersions(v1: string, v2: string): number {
+  const version1 = parseSemanticVersion(v1)
+  const version2 = parseSemanticVersion(v2)
+
+  if (!version1 || !version2) {
+    throw new Error('Invalid semantic version format')
+  }
+
+  // Compare major
+  if (version1.major !== version2.major) {
+    return version1.major - version2.major
+  }
+
+  // Compare minor
+  if (version1.minor !== version2.minor) {
+    return version1.minor - version2.minor
+  }
+
+  // Compare patch
+  if (version1.patch !== version2.patch) {
+    return version1.patch - version2.patch
+  }
+
+  // Handle prerelease versions
+  if (version1.prerelease && !version2.prerelease) {
+    return -1 // v1 is prerelease, v2 is stable -> v1 < v2
+  }
+  if (!version1.prerelease && version2.prerelease) {
+    return 1 // v1 is stable, v2 is prerelease -> v1 > v2
+  }
+  if (version1.prerelease && version2.prerelease) {
+    return version1.prerelease.localeCompare(version2.prerelease)
+  }
+
+  return 0 // Equal
+}
+
+export function isValidSemanticVersion(version: string): boolean {
+  return parseSemanticVersion(version) !== null
+}
+
+export function incrementVersion(
+  version: string,
+  type: 'major' | 'minor' | 'patch'
+): string {
+  const parsed = parseSemanticVersion(version)
+  if (!parsed) {
+    throw new Error('Invalid semantic version')
+  }
+
+  switch (type) {
+    case 'major':
+      return `${parsed.major + 1}.0.0`
+    case 'minor':
+      return `${parsed.major}.${parsed.minor + 1}.0`
+    case 'patch':
+      return `${parsed.major}.${parsed.minor}.${parsed.patch + 1}`
+  }
+}
+

@@ -72,6 +72,8 @@ import LoremIpsumVariants from '@/components/tools/LoremIpsumVariants'
 import TextToASCIIArt from '@/components/tools/TextToASCIIArt'
 import TimezoneConverter from '@/components/tools/TimezoneConverter'
 import CreditCardValidator from '@/components/tools/CreditCardValidator'
+import JSONSchemaValidator from '@/components/tools/JSONSchemaValidator'
+import SemanticVersionChecker from '@/components/tools/SemanticVersionChecker'
 
 // Tool component mapper
 const toolComponents: Record<string, React.ComponentType> = {
@@ -145,6 +147,8 @@ const toolComponents: Record<string, React.ComponentType> = {
   'text-to-ascii-art': TextToASCIIArt,
   'timezone-converter': TimezoneConverter,
   'credit-card-validator': CreditCardValidator,
+  'json-schema-validator': JSONSchemaValidator,
+  'semantic-version-checker': SemanticVersionChecker,
 }
 
 // Generate static params for all tools
