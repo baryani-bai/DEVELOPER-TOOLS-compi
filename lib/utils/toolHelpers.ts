@@ -238,17 +238,34 @@ export function formatHTML(html: string, indent: number = 2): string {
   let indentLevel = 0
   const indentStr = ' '.repeat(indent)
 
-  html.split(/(<[^>]+>)/g).forEach(part => {
-    if (part.match(/^<\/\w/)) {
-      indentLevel--
-    }
+  // Remove extra whitespace and split by tags
+  const cleaned = html.replace(/\s+/g, ' ').trim()
+  const parts = cleaned.split(/(<[^>]+>)/g).filter(part => part.trim())
 
-    if (part.trim()) {
-      formatted += indentStr.repeat(indentLevel) + part.trim() + '\n'
-    }
+  parts.forEach(part => {
+    const trimmed = part.trim()
+    if (!trimmed) return
 
-    if (part.match(/^<\w[^>]*[^\/]>$/)) {
-      indentLevel++
+    // Check if it's a closing tag
+    if (trimmed.match(/^<\/[\w-]+>/)) {
+      indentLevel = Math.max(0, indentLevel - 1)
+      formatted += indentStr.repeat(indentLevel) + trimmed + '\n'
+    }
+    // Check if it's a self-closing tag
+    else if (trimmed.match(/^<[\w-]+[^>]*\/>$/)) {
+      formatted += indentStr.repeat(indentLevel) + trimmed + '\n'
+    }
+    // Check if it's an opening tag
+    else if (trimmed.match(/^<[\w-]+[^>]*>/)) {
+      formatted += indentStr.repeat(indentLevel) + trimmed + '\n'
+      // Only increment for non-void elements
+      if (!trimmed.match(/^<(area|base|br|col|embed|hr|img|input|link|meta|param|source|track|wbr)/i)) {
+        indentLevel++
+      }
+    }
+    // Text content
+    else {
+      formatted += indentStr.repeat(indentLevel) + trimmed + '\n'
     }
   })
 

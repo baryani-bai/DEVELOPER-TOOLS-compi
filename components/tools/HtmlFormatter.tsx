@@ -14,6 +14,7 @@ export default function HtmlFormatter() {
   const [output, setOutput] = useState('')
   const [error, setError] = useState<string>()
   const [indent, setIndent] = useState(2)
+  const [showPreview, setShowPreview] = useState(false)
   const { showToast } = useToast()
 
   const handleFormat = () => {
@@ -65,6 +66,26 @@ export default function HtmlFormatter() {
 
   return (
     <div className="space-y-6">
+      <div className="bg-bg-secondary border border-border-primary p-5">
+        <h3 className="font-mono text-lg font-semibold text-text-primary mb-4">
+          View Options
+        </h3>
+        <div className="flex gap-2">
+          <Button
+            variant={!showPreview ? 'primary' : 'secondary'}
+            onClick={() => setShowPreview(false)}
+          >
+            📝 HTML Code
+          </Button>
+          <Button
+            variant={showPreview ? 'primary' : 'secondary'}
+            onClick={() => setShowPreview(true)}
+          >
+            👁️ Live Preview
+          </Button>
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <ToolPanel
           title="Input HTML"
@@ -99,13 +120,30 @@ export default function HtmlFormatter() {
           </div>
         </ToolPanel>
 
-        <CodeDisplay
-          title="Output"
-          code={output}
-          error={error}
-          language="html"
-          filename="formatted.html"
-        />
+        <div className="bg-bg-secondary border border-border-primary p-5">
+          <h3 className="font-mono text-lg font-semibold text-text-primary mb-4">
+            {showPreview ? 'Live Preview' : 'Output'}
+          </h3>
+          {output ? (
+            showPreview ? (
+              <div className="bg-white border border-border-primary p-4 min-h-[400px] max-h-[600px] overflow-auto">
+                <div dangerouslySetInnerHTML={{ __html: output }} />
+              </div>
+            ) : (
+              <CodeDisplay
+                title=""
+                code={output}
+                error={error}
+                language="html"
+                filename="formatted.html"
+              />
+            )
+          ) : (
+            <div className="bg-bg-tertiary border border-border-primary p-4 min-h-[400px] flex items-center justify-center text-text-secondary font-mono text-sm">
+              {error || 'Formatted HTML will appear here'}
+            </div>
+          )}
+        </div>
       </div>
 
       <KeyboardHint
