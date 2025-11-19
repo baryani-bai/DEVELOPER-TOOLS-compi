@@ -22,6 +22,13 @@ export default function ImageToBase64() {
       return
     }
 
+    // Validate file size (10MB limit to prevent browser crashes)
+    const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB
+    if (file.size > MAX_FILE_SIZE) {
+      showToast('File too large. Maximum size is 10MB', 'error')
+      return
+    }
+
     try {
       const result = await imageToBase64(file)
       setBase64(result)

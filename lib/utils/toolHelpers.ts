@@ -67,8 +67,12 @@ export function downloadFile(content: string, filename: string): void {
 
 // Format JSON with proper indentation
 export function formatJSON(json: string, spaces: string | number = 2): string {
-  const parsed = JSON.parse(json)
-  return JSON.stringify(parsed, null, spaces)
+  try {
+    const parsed = JSON.parse(json)
+    return JSON.stringify(parsed, null, spaces)
+  } catch (err) {
+    throw new Error(err instanceof Error ? err.message : 'Invalid JSON')
+  }
 }
 
 // Validate JSON
@@ -84,8 +88,12 @@ export function validateJSON(json: string): { valid: boolean; error?: string } {
 
 // Minify JSON
 export function minifyJSON(json: string): string {
-  const parsed = JSON.parse(json)
-  return JSON.stringify(parsed)
+  try {
+    const parsed = JSON.parse(json)
+    return JSON.stringify(parsed)
+  } catch (err) {
+    throw new Error(err instanceof Error ? err.message : 'Invalid JSON')
+  }
 }
 
 // Base64 encode
@@ -733,7 +741,12 @@ export function csvToJSON(csv: string): string {
 
 // Convert JSON to CSV
 export function jsonToCSV(json: string): string {
-  const data = JSON.parse(json)
+  let data
+  try {
+    data = JSON.parse(json)
+  } catch (err) {
+    throw new Error(err instanceof Error ? err.message : 'Invalid JSON')
+  }
 
   if (!Array.isArray(data) || data.length === 0) {
     throw new Error('JSON must be an array of objects')
@@ -800,8 +813,12 @@ export function generatePassword(
 
 // Convert JSON to YAML
 export function jsonToYAML(json: string, indent: number = 2): string {
-  const obj = JSON.parse(json)
-  return convertToYAML(obj, 0, indent)
+  try {
+    const obj = JSON.parse(json)
+    return convertToYAML(obj, 0, indent)
+  } catch (err) {
+    throw new Error(err instanceof Error ? err.message : 'Invalid JSON')
+  }
 }
 
 function convertToYAML(obj: any, depth: number, indent: number): string {
@@ -1405,7 +1422,12 @@ export function morseToText(morse: string): string {
 
 // JSON to XML conversion
 export function jsonToXML(json: string): string {
-  const obj = JSON.parse(json)
+  let obj
+  try {
+    obj = JSON.parse(json)
+  } catch (err) {
+    throw new Error(err instanceof Error ? err.message : 'Invalid JSON')
+  }
 
   function objectToXML(obj: any, rootName: string = 'root'): string {
     let xml = `<${rootName}>`
@@ -1594,8 +1616,17 @@ export function compareJSON(json1: string, json2: string): {
   differences: JSONDiffEntry[]
   identical: boolean
 } {
-  const obj1 = JSON.parse(json1)
-  const obj2 = JSON.parse(json2)
+  let obj1, obj2
+  try {
+    obj1 = JSON.parse(json1)
+  } catch (err) {
+    throw new Error('Invalid JSON in first input: ' + (err instanceof Error ? err.message : 'Unknown error'))
+  }
+  try {
+    obj2 = JSON.parse(json2)
+  } catch (err) {
+    throw new Error('Invalid JSON in second input: ' + (err instanceof Error ? err.message : 'Unknown error'))
+  }
 
   const differences: JSONDiffEntry[] = []
 

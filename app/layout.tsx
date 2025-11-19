@@ -1,23 +1,23 @@
 import type { Metadata } from 'next'
-import { JetBrains_Mono, Inter } from 'next/font/google'
 import '@/styles/globals.css'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import { ToastProvider } from '@/components/ui/Toast'
 
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ['latin'],
-  weight: ['400', '500', '700'],
+// Using system fonts to avoid external CDN dependency and build failures
+const fontMono = {
   variable: '--font-mono',
-  display: 'swap',
-})
+  style: {
+    fontFamily: '"SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace',
+  },
+}
 
-const inter = Inter({
-  subsets: ['latin'],
-  weight: ['400', '500', '600'],
+const fontSans = {
   variable: '--font-sans',
-  display: 'swap',
-})
+  style: {
+    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+  },
+}
 
 export const metadata: Metadata = {
   title: 'CodeBox - 70+ Free Developer Tools',
@@ -39,7 +39,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${jetbrainsMono.variable} ${inter.variable}`}>
+    <html lang="en" className={`${fontMono.variable} ${fontSans.variable}`}>
       <body className="min-h-screen flex flex-col">
         <ToastProvider>
           <Header />
