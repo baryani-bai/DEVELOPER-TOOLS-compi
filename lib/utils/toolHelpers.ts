@@ -2,7 +2,11 @@
  * Utility functions for tools
  */
 
-import DOMPurify from 'dompurify'
+// DOMPurify import - will be used only on client-side
+let DOMPurify: any
+if (typeof window !== 'undefined') {
+  DOMPurify = require('dompurify')
+}
 
 // Generate hash using Web Crypto API
 export async function generateHash(
@@ -320,12 +324,17 @@ export function markdownToHTML(markdown: string): string {
     // Line breaks
     .replace(/\n$/gim, '<br />')
 
-  // Sanitize HTML to prevent XSS attacks
-  return DOMPurify.sanitize(html, {
-    ALLOWED_TAGS: ['h1', 'h2', 'h3', 'strong', 'em', 'code', 'a', 'br', 'p', 'ul', 'ol', 'li'],
-    ALLOWED_ATTR: ['href'],
-    ALLOW_DATA_ATTR: false,
-  })
+  // Sanitize HTML to prevent XSS attacks (only on client-side)
+  if (typeof window !== 'undefined' && DOMPurify) {
+    return DOMPurify.sanitize(html, {
+      ALLOWED_TAGS: ['h1', 'h2', 'h3', 'strong', 'em', 'code', 'a', 'br', 'p', 'ul', 'ol', 'li'],
+      ALLOWED_ATTR: ['href'],
+      ALLOW_DATA_ATTR: false,
+    })
+  }
+
+  // On server-side, return the HTML as-is (it will be sanitized on client)
+  return html
 }
 
 // Color conversions
