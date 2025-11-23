@@ -31,6 +31,26 @@ export const metadata: Metadata = {
     'base64 encoder',
     'regex tester',
   ],
+  icons: {
+    icon: [
+      { url: '/icon.svg', type: 'image/svg+xml' },
+    ],
+    apple: [
+      { url: '/apple-icon.svg', type: 'image/svg+xml' },
+    ],
+  },
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://codebox.dev'),
+  openGraph: {
+    title: 'CodeBox - 70+ Free Developer Tools',
+    description: 'Free online developer toolkit with 70+ tools. Privacy-first, client-side processing.',
+    type: 'website',
+    locale: 'en_US',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'CodeBox - 70+ Free Developer Tools',
+    description: 'Free online developer toolkit with 70+ tools. Privacy-first, client-side processing.',
+  },
 }
 
 export default function RootLayout({

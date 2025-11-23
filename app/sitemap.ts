@@ -1,8 +1,9 @@
 import { MetadataRoute } from 'next'
 import { toolRegistry } from '@/lib/constants/toolRegistry'
+import { siteConfig } from '@/lib/config/site'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://codebox.dev' // TODO: Update with your actual domain
+  const baseUrl = siteConfig.url
   const currentDate = new Date()
 
   // Static pages
@@ -42,6 +43,24 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: currentDate,
       changeFrequency: 'monthly',
       priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/tools/formatters`,
+      lastModified: currentDate,
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/tools/security`,
+      lastModified: currentDate,
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/tools/generators`,
+      lastModified: currentDate,
+      changeFrequency: 'weekly',
+      priority: 0.8,
     },
   ]
 

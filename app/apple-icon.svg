@@ -1,0 +1,30 @@
+<svg width="180" height="180" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background with rounded corners for iOS -->
+  <rect width="180" height="180" rx="40" fill="#000000"/>
+
+  <!-- Terminal brackets with neon green -->
+  <path d="M42 45L42 135M138 45L138 135" stroke="#00ff41" stroke-width="8" stroke-linecap="square"/>
+
+  <!-- Code symbol in center -->
+  <!-- Left angle bracket -->
+  <path d="M70 70L49 90L70 110" stroke="#00ff41" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Right angle bracket -->
+  <path d="M110 70L131 90L110 110" stroke="#00ff41" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Forward slash -->
+  <path d="M98 70L82 110" stroke="#00ff41" stroke-width="7" stroke-linecap="round"/>
+
+  <!-- Corner decorations -->
+  <rect x="35" y="38" width="14" height="3" fill="#00ff41"/>
+  <rect x="35" y="38" width="3" height="14" fill="#00ff41"/>
+
+  <rect x="131" y="38" width="14" height="3" fill="#00ff41"/>
+  <rect x="142" y="38" width="3" height="14" fill="#00ff41"/>
+
+  <rect x="35" y="139" width="14" height="3" fill="#00ff41"/>
+  <rect x="35" y="128" width="3" height="14" fill="#00ff41"/>
+
+  <rect x="131" y="139" width="14" height="3" fill="#00ff41"/>
+  <rect x="142" y="128" width="3" height="14" fill="#00ff41"/>
+</svg>

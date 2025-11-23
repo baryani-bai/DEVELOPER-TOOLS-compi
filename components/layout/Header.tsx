@@ -6,6 +6,7 @@ import Container from '@/components/ui/Container'
 import Button from '@/components/ui/Button'
 import SearchModal from '@/components/ui/SearchModal'
 import { useKeyboardShortcuts } from '@/lib/hooks/useKeyboardShortcuts'
+import { siteConfig } from '@/lib/config/site'
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -85,15 +86,17 @@ export default function Header() {
               </kbd>
             </button>
 
-            <a
-              href="https://github.com"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Button variant="secondary" className="text-sm px-6 py-2">
-                ⭐ GitHub
-              </Button>
-            </a>
+            {siteConfig.features.showGitHubLink && (
+              <a
+                href={siteConfig.links.github}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Button variant="secondary" className="text-sm px-6 py-2">
+                  ⭐ GitHub
+                </Button>
+              </a>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -153,17 +156,19 @@ export default function Header() {
               >
                 About
               </Link>
-              <div className="pt-4 border-t border-border-primary">
-                <a
-                  href="https://github.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Button variant="secondary" className="w-full">
-                    ⭐ GitHub
-                  </Button>
-                </a>
-              </div>
+              {siteConfig.features.showGitHubLink && (
+                <div className="pt-4 border-t border-border-primary">
+                  <a
+                    href={siteConfig.links.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Button variant="secondary" className="w-full">
+                      ⭐ GitHub
+                    </Button>
+                  </a>
+                </div>
+              )}
             </nav>
           </div>
         )}

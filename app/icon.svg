@@ -1,0 +1,30 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="512" height="512" fill="#000000"/>
+
+  <!-- Terminal brackets with neon green -->
+  <path d="M120 128L120 384M392 128L392 384" stroke="#00ff41" stroke-width="24" stroke-linecap="square"/>
+
+  <!-- Code symbol in center -->
+  <!-- Left angle bracket -->
+  <path d="M200 200L140 256L200 312" stroke="#00ff41" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Right angle bracket -->
+  <path d="M312 200L372 256L312 312" stroke="#00ff41" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Forward slash -->
+  <path d="M280 200L232 312" stroke="#00ff41" stroke-width="20" stroke-linecap="round"/>
+
+  <!-- Corner decorations -->
+  <rect x="100" y="108" width="40" height="8" fill="#00ff41"/>
+  <rect x="100" y="108" width="8" height="40" fill="#00ff41"/>
+
+  <rect x="372" y="108" width="40" height="8" fill="#00ff41"/>
+  <rect x="404" y="108" width="8" height="40" fill="#00ff41"/>
+
+  <rect x="100" y="396" width="40" height="8" fill="#00ff41"/>
+  <rect x="100" y="364" width="8" height="40" fill="#00ff41"/>
+
+  <rect x="372" y="396" width="40" height="8" fill="#00ff41"/>
+  <rect x="404" y="364" width="8" height="40" fill="#00ff41"/>
+</svg>

@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import Container from '@/components/ui/Container'
+import { siteConfig } from '@/lib/config/site'
 
 export default function Footer() {
   return (
@@ -86,34 +87,40 @@ export default function Footer() {
               Connect
             </h3>
             <ul className="space-y-3">
-              <li>
-                <a
-                  href="https://github.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-text-tertiary hover:text-accent-primary transition-colors"
-                >
-                  GitHub
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://twitter.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-text-tertiary hover:text-accent-primary transition-colors"
-                >
-                  Twitter
-                </a>
-              </li>
-              <li>
-                <a
-                  href="mailto:hello@codebox.dev"
-                  className="text-sm text-text-tertiary hover:text-accent-primary transition-colors"
-                >
-                  Email
-                </a>
-              </li>
+              {siteConfig.features.showGitHubLink && (
+                <li>
+                  <a
+                    href={siteConfig.links.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-text-tertiary hover:text-accent-primary transition-colors"
+                  >
+                    GitHub
+                  </a>
+                </li>
+              )}
+              {siteConfig.features.showTwitterLink && (
+                <li>
+                  <a
+                    href={siteConfig.links.twitter}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-text-tertiary hover:text-accent-primary transition-colors"
+                  >
+                    Twitter
+                  </a>
+                </li>
+              )}
+              {siteConfig.features.showEmailLink && (
+                <li>
+                  <a
+                    href={`mailto:${siteConfig.links.email}`}
+                    className="text-sm text-text-tertiary hover:text-accent-primary transition-colors"
+                  >
+                    Email
+                  </a>
+                </li>
+              )}
             </ul>
           </div>
         </div>
@@ -123,7 +130,7 @@ export default function Footer() {
           <p className="text-sm text-text-tertiary">
             Built with ❤️ for developers • MIT Licensed •{' '}
             <Link href="/" className="text-accent-primary hover:underline">
-              CodeBox
+              {siteConfig.name}
             </Link>
           </p>
           <p className="text-xs text-text-disabled mt-2">
