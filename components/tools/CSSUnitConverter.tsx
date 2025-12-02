@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Button from '@/components/ui/Button'
 import KeyboardHint from '@/components/ui/KeyboardHint'
 import { convertCSSUnit } from '@/lib/utils/toolHelpers'
@@ -16,7 +16,7 @@ export default function CSSUnitConverter() {
 
   const units = ['px', 'rem', 'em', 'pt', 'cm', 'mm', 'in']
 
-  const handleConvert = () => {
+  const handleConvert = useCallback(() => {
     try {
       const converted: Record<string, number> = {}
       units.forEach(unit => {
@@ -29,15 +29,14 @@ export default function CSSUnitConverter() {
     } catch (err) {
       showToast(err instanceof Error ? err.message : 'Conversion failed', 'error')
     }
-  }
+  }, [inputValue, fromUnit, baseFontSize, showToast, units])
 
   // Auto-convert on value change
   useEffect(() => {
     if (inputValue) {
       handleConvert()
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [inputValue, fromUnit, baseFontSize])
+  }, [inputValue, fromUnit, baseFontSize, handleConvert])
 
   const handleClear = () => {
     setInputValue(16)

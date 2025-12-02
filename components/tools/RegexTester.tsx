@@ -8,11 +8,17 @@ import { testRegex } from '@/lib/utils/toolHelpers'
 import { useToast } from '@/components/ui/Toast'
 import { useKeyboardShortcuts } from '@/lib/hooks/useKeyboardShortcuts'
 
+interface RegexTestResult {
+  matches: RegExpMatchArray | null
+  isValid: boolean
+  error?: string
+}
+
 export default function RegexTester() {
   const [pattern, setPattern] = useState('\\d{3}-\\d{3}-\\d{4}')
   const [flags, setFlags] = useState('g')
   const [testText, setTestText] = useState('Call me at 555-123-4567 or 555-987-6543')
-  const [result, setResult] = useState<any>(null)
+  const [result, setResult] = useState<RegexTestResult | null>(null)
   const { showToast } = useToast()
 
   const handleTest = () => {

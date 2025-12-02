@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
+import DOMPurify from 'dompurify'
 import ToolPanel from './ToolPanel'
 import CodeDisplay from './CodeDisplay'
 import Button from '@/components/ui/Button'
@@ -63,6 +64,45 @@ export default function HtmlFormatter() {
     { key: 'Enter', ctrlKey: true, handler: handleFormat, description: 'Format HTML' },
     { key: 'k', ctrlKey: true, handler: handleClear, description: 'Clear' },
   ])
+
+  // Sanitize HTML output to prevent XSS attacks
+  const sanitizedOutput = useMemo(() => {
+    if (!output || !showPreview) return output
+
+    // Only sanitize on client-side where DOMPurify is available
+    if (typeof window !== 'undefined') {
+      return DOMPurify.sanitize(output, {
+        ALLOWED_TAGS: [
+          'html', 'head', 'body', 'title', 'meta', 'link', 'style',
+          'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+          'p', 'br', 'hr', 'a', 'div', 'span', 'section', 'article', 'aside', 'nav', 'header', 'footer',
+          'ul', 'ol', 'li', 'dl', 'dt', 'dd',
+          'table', 'thead', 'tbody', 'tfoot', 'tr', 'th', 'td', 'caption',
+          'img', 'figure', 'figcaption',
+          'strong', 'em', 'b', 'i', 'u', 's', 'mark', 'small', 'sub', 'sup',
+          'code', 'pre', 'kbd', 'samp', 'var',
+          'blockquote', 'q', 'cite', 'abbr', 'time',
+          'form', 'input', 'button', 'select', 'option', 'textarea', 'label', 'fieldset', 'legend',
+          'iframe', 'video', 'audio', 'source', 'track', 'canvas', 'svg', 'path', 'circle', 'rect',
+        ],
+        ALLOWED_ATTR: [
+          'href', 'src', 'alt', 'title', 'id', 'class', 'style', 'name', 'value', 'type',
+          'width', 'height', 'target', 'rel', 'data-*', 'aria-*',
+          'placeholder', 'required', 'disabled', 'readonly', 'checked', 'selected',
+          'rowspan', 'colspan', 'scope', 'align', 'valign',
+          'viewBox', 'd', 'fill', 'stroke', 'stroke-width', 'cx', 'cy', 'r', 'x', 'y',
+        ],
+        ALLOW_DATA_ATTR: true,
+        ALLOW_ARIA_ATTR: true,
+        // Remove potentially dangerous attributes
+        FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover', 'onfocus', 'onblur'],
+        // Keep relative URLs safe
+        ALLOW_UNKNOWN_PROTOCOLS: false,
+      })
+    }
+
+    return output
+  }, [output, showPreview])
 
   return (
     <div className="space-y-6">
@@ -127,7 +167,7 @@ export default function HtmlFormatter() {
           {output ? (
             showPreview ? (
               <div className="bg-white border border-border-primary p-4 min-h-[400px] max-h-[600px] overflow-auto">
-                <div dangerouslySetInnerHTML={{ __html: output }} />
+                <div dangerouslySetInnerHTML={{ __html: sanitizedOutput }} />
               </div>
             ) : (
               <CodeDisplay

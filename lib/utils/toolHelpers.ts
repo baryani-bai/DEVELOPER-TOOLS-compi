@@ -2,8 +2,10 @@
  * Utility functions for tools
  */
 
+import type DOMPurifyType from 'dompurify'
+
 // DOMPurify import - will be used only on client-side
-let DOMPurify: any
+let DOMPurify: typeof DOMPurifyType | undefined
 if (typeof window !== 'undefined') {
   DOMPurify = require('dompurify')
 }
@@ -426,22 +428,43 @@ export function testRegex(pattern: string, flags: string, text: string): {
   }
 }
 
-// JWT decode (simple - no verification)
-export function decodeJWT(token: string): {
-  header: any
-  payload: any
+// JWT Types
+export interface JWTHeader {
+  alg?: string
+  typ?: string
+  kid?: string
+  [key: string]: unknown
+}
+
+export interface JWTPayload {
+  iss?: string // Issuer
+  sub?: string // Subject
+  aud?: string | string[] // Audience
+  exp?: number // Expiration time
+  nbf?: number // Not before
+  iat?: number // Issued at
+  jti?: string // JWT ID
+  [key: string]: unknown // Allow additional claims
+}
+
+export interface JWTDecodeResult {
+  header: JWTHeader | null
+  payload: JWTPayload | null
   signature: string
   isValid: boolean
   error?: string
-} {
+}
+
+// JWT decode (simple - no verification)
+export function decodeJWT(token: string): JWTDecodeResult {
   try {
     const parts = token.split('.')
     if (parts.length !== 3) {
       throw new Error('Invalid JWT format')
     }
 
-    const header = JSON.parse(atob(parts[0]))
-    const payload = JSON.parse(atob(parts[1]))
+    const header = JSON.parse(atob(parts[0])) as JWTHeader
+    const payload = JSON.parse(atob(parts[1])) as JWTPayload
     const signature = parts[2]
 
     return { header, payload, signature, isValid: true }
@@ -847,7 +870,11 @@ export function jsonToYAML(json: string, indent: number = 2): string {
   }
 }
 
-function convertToYAML(obj: any, depth: number, indent: number): string {
+type YAMLValue = string | number | boolean | null | undefined | YAMLObject | YAMLArray
+type YAMLObject = { [key: string]: YAMLValue }
+type YAMLArray = YAMLValue[]
+
+function convertToYAML(obj: YAMLValue, depth: number, indent: number): string {
   const indentStr = ' '.repeat(indent)
   let yaml = ''
 
@@ -862,11 +889,12 @@ function convertToYAML(obj: any, depth: number, indent: number): string {
     })
   } else if (typeof obj === 'object' && obj !== null) {
     Object.keys(obj).forEach(key => {
+      const objAsRecord = obj as YAMLObject
       yaml += indentStr.repeat(depth) + key + ': '
-      if (typeof obj[key] === 'object' && obj[key] !== null) {
-        yaml += '\n' + convertToYAML(obj[key], depth + 1, indent)
+      if (typeof objAsRecord[key] === 'object' && objAsRecord[key] !== null) {
+        yaml += '\n' + convertToYAML(objAsRecord[key], depth + 1, indent)
       } else {
-        yaml += formatYAMLValue(obj[key]) + '\n'
+        yaml += formatYAMLValue(objAsRecord[key]) + '\n'
       }
     })
   } else {
@@ -876,7 +904,7 @@ function convertToYAML(obj: any, depth: number, indent: number): string {
   return yaml
 }
 
-function formatYAMLValue(value: any): string {
+function formatYAMLValue(value: YAMLValue): string {
   if (typeof value === 'string') {
     // Quote strings with special characters
     if (value.includes(':') || value.includes('#') || value.includes('\n')) {
@@ -890,11 +918,16 @@ function formatYAMLValue(value: any): string {
   return String(value)
 }
 
+interface YAMLStackItem {
+  obj: YAMLObject | YAMLArray
+  indent: number
+}
+
 // Convert YAML to JSON (simple parser)
 export function yamlToJSON(yaml: string): string {
   const lines = yaml.trim().split('\n')
-  const result: any = {}
-  const stack: any[] = [{ obj: result, indent: -1 }]
+  const result: YAMLObject = {}
+  const stack: YAMLStackItem[] = [{ obj: result, indent: -1 }]
 
   lines.forEach(line => {
     const indent = line.search(/\S/)
@@ -926,6 +959,11 @@ export function yamlToJSON(yaml: string): string {
         parent.push(parseValue(value))
       }
     } else if (trimmed.includes(':')) {
+      // This should only happen with objects, not arrays
+      if (Array.isArray(parent)) {
+        throw new Error('Invalid YAML: key-value pair in array context')
+      }
+
       parseKeyValue(trimmed, parent)
       const [key] = trimmed.split(':')
       if (trimmed.endsWith(':')) {
@@ -933,10 +971,10 @@ export function yamlToJSON(yaml: string): string {
         const nextLine = lines[lines.indexOf(line) + 1]
         if (nextLine && nextLine.trim().startsWith('- ')) {
           parent[key.trim()] = []
-          stack.push({ obj: parent[key.trim()], indent })
+          stack.push({ obj: parent[key.trim()] as YAMLArray, indent })
         } else {
           parent[key.trim()] = {}
-          stack.push({ obj: parent[key.trim()], indent })
+          stack.push({ obj: parent[key.trim()] as YAMLObject, indent })
         }
       }
     }
@@ -945,7 +983,12 @@ export function yamlToJSON(yaml: string): string {
   return JSON.stringify(result, null, 2)
 }
 
-function parseKeyValue(line: string, obj: any) {
+function parseKeyValue(line: string, obj: YAMLObject | YAMLArray): void {
+  // This function should only be called with objects, not arrays
+  if (Array.isArray(obj)) {
+    return
+  }
+
   const colonIndex = line.indexOf(':')
   const key = line.substring(0, colonIndex).trim()
   const value = line.substring(colonIndex + 1).trim()
@@ -955,7 +998,7 @@ function parseKeyValue(line: string, obj: any) {
   }
 }
 
-function parseValue(value: string): any {
+function parseValue(value: string): string | number | boolean | null {
   // Remove quotes
   if ((value.startsWith('"') && value.endsWith('"')) ||
       (value.startsWith("'") && value.endsWith("'"))) {
